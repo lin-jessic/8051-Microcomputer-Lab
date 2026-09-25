@@ -1,0 +1,344 @@
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 1   
+
+
+C51 COMPILER V6.11, COMPILATION OF MODULE 06B
+OBJECT MODULE PLACED IN 06b.OBJ
+COMPILER INVOKED BY: c:\c51\bin\C51.EXE 06b.c
+
+stmt level    source
+
+   1          #include <REG51.H>
+   2          
+   3          /* LCD 北竲 */
+   4          sbit RS = P1^0;
+   5          sbit RW = P1^1;
+   6          sbit EN = P1^2;
+   7          
+   8          /* Keypad Column */
+   9          sbit KC0 = P2^0;
+  10          sbit KC1 = P2^1;
+  11          sbit KC2 = P2^2;
+  12          sbit KC3 = P2^3;
+  13          
+  14          /* Keypad Row */
+  15          sbit KR0 = P2^4;
+  16          sbit KR1 = P2^5;
+  17          sbit KR2 = P2^6;
+  18          sbit KR3 = P2^7;
+  19          
+  20          /* LCD ず甧 */
+  21          unsigned char line1[20];
+  22          unsigned char line2[20];
+  23          unsigned char cursor_pos = 0;
+  24          
+  25          
+  26          /*------------------ ┑筐 ------------------*/
+  27          
+  28          void Delay1ms(void)
+  29          {
+  30   1          unsigned int i;
+  31   1          for(i=0;i<120;i++);
+  32   1      }
+  33          
+  34          void Delay2ms(void)
+  35          {
+  36   1          Delay1ms();
+  37   1          Delay1ms();
+  38   1      }
+  39          
+  40          void Delay5ms(void)
+  41          {
+  42   1          Delay1ms();
+  43   1          Delay1ms();
+  44   1          Delay1ms();
+  45   1          Delay1ms();
+  46   1          Delay1ms();
+  47   1      }
+  48          
+  49          void Delay40us(void)
+  50          {
+  51   1          unsigned char i;
+  52   1          for(i=0;i<20;i++);
+  53   1      }
+  54          
+  55          
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 2   
+
+  56          /*------------------ LCD ------------------*/
+  57          
+  58          void LCD_Command(unsigned char cmd)
+  59          {
+  60   1          P0 = cmd;
+  61   1          RS = 0;
+  62   1          RW = 0;
+  63   1          EN = 1;
+  64   1          Delay40us();
+  65   1          EN = 0;
+  66   1      }
+  67          
+  68          void LCD_Data(unsigned char dat)
+  69          {
+  70   1          P0 = dat;
+  71   1          RS = 1;
+  72   1          RW = 0;
+  73   1          EN = 1;
+  74   1          Delay40us();
+  75   1          EN = 0;
+  76   1      }
+  77          
+  78          /* 礶 LCD */
+  79          void LCD_Redraw(void)
+  80          {
+  81   1          unsigned char i;
+  82   1      
+  83   1          LCD_Command(0x80);
+  84   1          for(i=0;i<20;i++)
+  85   1              LCD_Data(line1[i]);
+  86   1      
+  87   1          LCD_Command(0xC0);
+  88   1          for(i=0;i<20;i++)
+  89   1              LCD_Data(line2[i]);
+  90   1      }
+  91          
+  92          
+  93          /*------------------ Keypad ------------------*/
+  94          
+  95          bit Keypad_AnyPressed(void)
+  96          {
+  97   1          if(KR0==0 || KR1==0 || KR2==0 || KR3==0)
+  98   1              return 1;
+  99   1          else
+ 100   1              return 0;
+ 101   1      }
+ 102          
+ 103          void Keypad_WaitRelease(void)
+ 104          {
+ 105   1          while(Keypad_AnyPressed());
+ 106   1          Delay5ms();
+ 107   1      }
+ 108          
+ 109          /* Keypad 苯磞 */
+ 110          unsigned char Keypad_Scan(void)
+ 111          {
+ 112   1          static unsigned char keymap[4][4] =
+ 113   1          {
+ 114   1              {'1','2','3','A'},
+ 115   1              {'4','5','6','B'},
+ 116   1              {'7','8','9','C'},
+ 117   1              {'*','0','#','D'}
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 3   
+
+ 118   1          };
+ 119   1      
+ 120   1          unsigned char row,col;
+ 121   1      
+ 122   1          KR0 = KR1 = KR2 = KR3 = 1;
+ 123   1      
+ 124   1          for(col=0; col<4; col++)
+ 125   1          {
+ 126   2              KC0 = KC1 = KC2 = KC3 = 1;
+ 127   2      
+ 128   2              switch(col)
+ 129   2              {
+ 130   3                  case 0: KC0 = 0; break;
+ 131   3                  case 1: KC1 = 0; break;
+ 132   3                  case 2: KC2 = 0; break;
+ 133   3                  case 3: KC3 = 0; break;
+ 134   3              }
+ 135   2      
+ 136   2              if(KR0==0){ row=0; goto pressed; }
+ 137   2              if(KR1==0){ row=1; goto pressed; }
+ 138   2              if(KR2==0){ row=2; goto pressed; }
+ 139   2              if(KR3==0){ row=3; goto pressed; }
+ 140   2          }
+ 141   1      
+ 142   1          return 0;
+ 143   1      
+ 144   1      pressed:
+ 145   1          Delay5ms();
+ 146   1          Keypad_WaitRelease();
+ 147   1          return keymap[row][col];
+ 148   1      }
+ 149          
+ 150          
+ 151          /*------------------  ------------------*/
+ 152          
+ 153          /* Scroll */
+ 154          void Scroll(void)
+ 155          {
+ 156   1          unsigned char i;
+ 157   1      
+ 158   1          for(i=0;i<20;i++)
+ 159   1              line1[i] = line2[i];
+ 160   1      
+ 161   1          for(i=0;i<20;i++)
+ 162   1              line2[i] = ' ';
+ 163   1      
+ 164   1          cursor_pos = 20;
+ 165   1      
+ 166   1          LCD_Redraw();
+ 167   1          LCD_Command(0xC0);
+ 168   1      }
+ 169          
+ 170          
+ 171          /* Backspace */
+ 172          void Handle_Backspace(void)
+ 173          {
+ 174   1          if(cursor_pos==0) return;
+ 175   1      
+ 176   1          cursor_pos--;
+ 177   1      
+ 178   1          if(cursor_pos<20)
+ 179   1              line1[cursor_pos] = ' ';
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 4   
+
+ 180   1          else
+ 181   1              line2[cursor_pos-20] = ' ';
+ 182   1      
+ 183   1          LCD_Redraw();
+ 184   1      
+ 185   1          if(cursor_pos<20)
+ 186   1              LCD_Command(0x80 + cursor_pos);
+ 187   1          else
+ 188   1              LCD_Command(0xC0 + (cursor_pos-20));
+ 189   1      }
+ 190          
+ 191          
+ 192          /* 睲埃场 */
+ 193          void Handle_ClearAll(void)
+ 194          {
+ 195   1          unsigned char i;
+ 196   1      
+ 197   1          for(i=0;i<20;i++)
+ 198   1          {
+ 199   2              line1[i] = ' ';
+ 200   2              line2[i] = ' ';
+ 201   2          }
+ 202   1      
+ 203   1          cursor_pos = 0;
+ 204   1      
+ 205   1          LCD_Command(0x01);
+ 206   1          Delay2ms();
+ 207   1          LCD_Command(0x80);
+ 208   1      }
+ 209          
+ 210          
+ 211          /* 村夹北 */
+ 212          void Move_Cursor_Left(void)
+ 213          {
+ 214   1          if(cursor_pos>0) cursor_pos--;
+ 215   1      
+ 216   1          if(cursor_pos<20)
+ 217   1              LCD_Command(0x80 + cursor_pos);
+ 218   1          else
+ 219   1              LCD_Command(0xC0 + (cursor_pos-20));
+ 220   1      }
+ 221          
+ 222          void Move_Cursor_Right(void)
+ 223          {
+ 224   1          if(cursor_pos<39) cursor_pos++;
+ 225   1      
+ 226   1          if(cursor_pos<20)
+ 227   1              LCD_Command(0x80 + cursor_pos);
+ 228   1          else
+ 229   1              LCD_Command(0xC0 + (cursor_pos-20));
+ 230   1      }
+ 231          
+ 232          void Move_Cursor_Up(void)
+ 233          {
+ 234   1          if(cursor_pos>=20)
+ 235   1              cursor_pos -= 20;
+ 236   1      
+ 237   1          LCD_Command(0x80 + cursor_pos);
+ 238   1      }
+ 239          
+ 240          void Move_Cursor_Down(void)
+ 241          {
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 5   
+
+ 242   1          if(cursor_pos<20)
+ 243   1              cursor_pos += 20;
+ 244   1      
+ 245   1          LCD_Command(0xC0 + (cursor_pos-20));
+ 246   1      }
+ 247          
+ 248          
+ 249          /*------------------ 祘Α ------------------*/
+ 250          
+ 251          void main(void)
+ 252          {
+ 253   1          unsigned char key;
+ 254   1          unsigned char i;
+ 255   1      
+ 256   1          /* ﹍てゅ */
+ 257   1          for(i=0;i<20;i++)
+ 258   1          {
+ 259   2              line1[i] = ' ';
+ 260   2              line2[i] = ' ';
+ 261   2          }
+ 262   1      
+ 263   1          cursor_pos = 0;
+ 264   1      
+ 265   1          Delay5ms();
+ 266   1      
+ 267   1          /* LCD ﹍て */
+ 268   1          LCD_Command(0x38);
+ 269   1          LCD_Command(0x0E);
+ 270   1          LCD_Command(0x06);
+ 271   1          LCD_Command(0x01);
+ 272   1      
+ 273   1          Delay2ms();
+ 274   1      
+ 275   1          LCD_Command(0x80);
+ 276   1      
+ 277   1          while(1)
+ 278   1          {
+ 279   2              key = Keypad_Scan();
+ 280   2      
+ 281   2              if(key != 0)
+ 282   2              {
+ 283   3                  if(key=='*'){ Handle_Backspace(); continue; }
+ 284   3                  if(key=='0'){ Handle_ClearAll(); continue; }
+ 285   3                  if(key=='#'){ Scroll(); continue; }
+ 286   3      
+ 287   3                  if(key=='A'){ Move_Cursor_Left(); continue; }
+ 288   3                  if(key=='B'){ Move_Cursor_Right(); continue; }
+ 289   3                  if(key=='C'){ Move_Cursor_Up(); continue; }
+ 290   3                  if(key=='D'){ Move_Cursor_Down(); continue; }
+ 291   3      
+ 292   3                  if(cursor_pos==20)
+ 293   3                      LCD_Command(0xC0);
+ 294   3                  else if(cursor_pos==40)
+ 295   3                      Scroll();
+ 296   3      
+ 297   3                  if(cursor_pos<20)
+ 298   3                  {
+ 299   4                      line1[cursor_pos] = key;
+ 300   4                      LCD_Data(key);
+ 301   4                      cursor_pos++;
+ 302   4                  }
+ 303   3                  else
+C51 COMPILER V6.11  06B                                                                    03/09/2026 13:21:28 PAGE 6   
+
+ 304   3                  {
+ 305   4                      line2[cursor_pos-20] = key;
+ 306   4                      LCD_Data(key);
+ 307   4                      cursor_pos++;
+ 308   4                  }
+ 309   3              }
+ 310   2          }
+ 311   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    624    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     57    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

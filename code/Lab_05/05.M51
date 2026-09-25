@@ -1,0 +1,90 @@
+BL51 BANKED LINKER/LOCATER V4.21                                                        03/09/2026  13:19:55  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V4.21, INVOKED BY:
+C:\C51\BIN\L51 05.OBJ TO 05.ABS
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  05.OBJ (05)
+  C:\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  05.ABS (05)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0010H     UNIT         ?DT?05
+            IDATA   0018H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0063H     UNIT         ?PR?KEYPAD_SCAN?05
+            CODE    08EFH     0038H     UNIT         ?PR?MAIN?05
+            CODE    0927H     0013H     UNIT         ?C_INITSEG
+            CODE    093AH     0012H     UNIT         ?PR?DELAY1MS?05
+            CODE    094CH     0010H     UNIT         ?PR?KEYPAD_ANYPRESSED?05
+            CODE    095CH     000EH     UNIT         ?PR?_LCD_COMMAND?05
+            CODE    096AH     000EH     UNIT         ?PR?_LCD_DATA?05
+            CODE    0978H     000CH     UNIT         ?PR?DELAY5MS?05
+            CODE    0984H     0008H     UNIT         ?PR?KEYPAD_WAITRELEASE?05
+            CODE    098CH     0007H     UNIT         ?PR?DELAY40US?05
+            CODE    0993H     0003H     UNIT         ?PR?DELAY2MS?05
+
+
+
+OVERLAY MAP OF MODULE:   05.ABS (05)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?05
+  +--> ?C_INITSEG
+
+?PR?MAIN?05
+  +--> ?PR?DELAY5MS?05
+  +--> ?PR?_LCD_COMMAND?05
+  +--> ?PR?DELAY2MS?05
+  +--> ?PR?KEYPAD_SCAN?05
+  +--> ?PR?_LCD_DATA?05
+BL51 BANKED LINKER/LOCATER V4.21                                                      03/09/2026  13:19:55  PAGE 2
+
+
+
+?PR?DELAY5MS?05
+  +--> ?PR?DELAY1MS?05
+
+?PR?_LCD_COMMAND?05
+  +--> ?PR?DELAY40US?05
+
+?PR?DELAY2MS?05
+  +--> ?PR?DELAY1MS?05
+
+?PR?KEYPAD_SCAN?05
+  +--> ?PR?DELAY5MS?05
+  +--> ?PR?KEYPAD_WAITRELEASE?05
+
+?PR?KEYPAD_WAITRELEASE?05
+  +--> ?PR?KEYPAD_ANYPRESSED?05
+  +--> ?PR?DELAY5MS?05
+
+?PR?_LCD_DATA?05
+  +--> ?PR?DELAY40US?05
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0109H BYTE (12%) *
+******************************************************************************
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,108 @@
+C51 COMPILER V6.11  06                                                                     03/09/2026 13:14:13 PAGE 1   
+
+
+C51 COMPILER V6.11, COMPILATION OF MODULE 06
+OBJECT MODULE PLACED IN 06.OBJ
+COMPILER INVOKED BY: c:\c51\bin\C51.EXE 06.c
+
+stmt level    source
+
+   1          #include <REG51.H>
+   2          
+   3          sbit BZ = P0^0;   // 蜂鳴器接在 P0.0
+   4          
+   5          #define DO 0xF22A
+   6          #define RE 0xF3C2
+   7          #define MI 0xF536
+   8          #define FA 0xF5FD
+   9          #define SO 0xF729
+  10          #define LA 0xF7D0
+  11          
+  12          /* 音階 */
+  13          unsigned int code Song[] = {
+  14              MI,MI,FA,SO,
+  15              SO,FA,MI,RE,
+  16              DO,DO,RE,MI,
+  17              MI,RE,RE,
+  18          
+  19              MI,MI,FA,SO,
+  20              SO,FA,MI,RE,
+  21              DO,DO,RE,MI,
+  22              RE,DO,DO
+  23          };
+  24          
+  25          /* 節拍 */
+  26          unsigned char code Dur[] = {
+  27              2,2,2,3,
+  28              3,2,2,2,
+  29              2,2,2,3,
+  30              2,2,3,
+  31          
+  32              2,2,2,3,
+  33              3,2,2,2,
+  34              2,2,2,3,
+  35              2,3,4
+  36          };
+  37          
+  38          /* 延遲 */
+  39          void Delay_ms(unsigned int t)
+  40          {
+  41   1          unsigned int i,j;
+  42   1          for(i=0;i<t;i++)
+  43   1              for(j=0;j<120;j++);
+  44   1      }
+  45          
+  46          /* 播放音符 */
+  47          void Play(unsigned int p)
+  48          {
+  49   1          unsigned int i;
+  50   1      
+  51   1          for(i=0;i<200;i++)
+  52   1          {
+  53   2              TH0 = (p >> 8);
+  54   2              TL0 = (p & 0xFF);
+  55   2      
+C51 COMPILER V6.11  06                                                                     03/09/2026 13:14:13 PAGE 2   
+
+  56   2              TF0 = 0;
+  57   2              TR0 = 1;
+  58   2      
+  59   2              while(TF0 == 0);
+  60   2      
+  61   2              TR0 = 0;
+  62   2              BZ = ~BZ;
+  63   2          }
+  64   1      }
+  65          
+  66          void main(void)
+  67          {
+  68   1          unsigned char i;
+  69   1      
+  70   1          TMOD = 0x01;   // Timer0 Mode1 (16bit)
+  71   1      
+  72   1          while(1)
+  73   1          {
+  74   2              for(i=0;i<sizeof(Song)/sizeof(Song[0]);i++)
+  75   2              {
+  76   3                  Play(Song[i]);
+  77   3                  BZ = 0;
+  78   3                  Delay_ms(50 * Dur[i]);
+  79   3              }
+  80   2      
+  81   2              Delay_ms(400);
+  82   2          }
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    124    ----
+   CONSTANT SIZE    =     90    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

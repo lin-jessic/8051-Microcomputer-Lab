@@ -1,0 +1,136 @@
+BL51 BANKED LINKER/LOCATER V4.21                                                        03/09/2026  13:21:28  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V4.21, INVOKED BY:
+C:\C51\BIN\L51 06B.OBJ TO 06B.ABS
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  06B.OBJ (06B)
+  C:\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  06B.ABS (06B)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0039H     UNIT         ?DT?06B
+            IDATA   0041H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     00A1H     UNIT         ?PR?MAIN?06B
+            CODE    08A1H     008CH     UNIT         ?C_C51STARTUP
+            CODE    092DH     0063H     UNIT         ?PR?KEYPAD_SCAN?06B
+            CODE    0990H     0033H     UNIT         ?PR?HANDLE_BACKSPACE?06B
+            CODE    09C3H     0029H     UNIT         ?PR?LCD_REDRAW?06B
+            CODE    09ECH     0029H     UNIT         ?PR?SCROLL?06B
+            CODE    0A15H     0022H     UNIT         ?PR?HANDLE_CLEARALL?06B
+            CODE    0A37H     001CH     UNIT         ?PR?MOVE_CURSOR_LEFT?06B
+            CODE    0A53H     001CH     UNIT         ?PR?MOVE_CURSOR_RIGHT?06B
+            CODE    0A6FH     0016H     UNIT         ?C_INITSEG
+            CODE    0A85H     0015H     UNIT         ?PR?_LCD_DATA?06B
+            CODE    0A9AH     0015H     UNIT         ?PR?MOVE_CURSOR_DOWN?06B
+            CODE    0AAFH     0013H     UNIT         ?PR?_LCD_COMMAND?06B
+            CODE    0AC2H     0012H     UNIT         ?PR?DELAY1MS?06B
+            CODE    0AD4H     0010H     UNIT         ?PR?KEYPAD_ANYPRESSED?06B
+            CODE    0AE4H     0010H     UNIT         ?PR?MOVE_CURSOR_UP?06B
+            CODE    0AF4H     000CH     UNIT         ?PR?DELAY5MS?06B
+            CODE    0B00H     0008H     UNIT         ?PR?KEYPAD_WAITRELEASE?06B
+            CODE    0B08H     0007H     UNIT         ?PR?DELAY40US?06B
+            CODE    0B0FH     0003H     UNIT         ?PR?DELAY2MS?06B
+
+
+
+OVERLAY MAP OF MODULE:   06B.ABS (06B)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?06B
+BL51 BANKED LINKER/LOCATER V4.21                                                      03/09/2026  13:21:28  PAGE 2
+
+
+  +--> ?C_INITSEG
+
+?PR?MAIN?06B
+  +--> ?PR?DELAY5MS?06B
+  +--> ?PR?_LCD_COMMAND?06B
+  +--> ?PR?DELAY2MS?06B
+  +--> ?PR?KEYPAD_SCAN?06B
+  +--> ?PR?HANDLE_BACKSPACE?06B
+  +--> ?PR?HANDLE_CLEARALL?06B
+  +--> ?PR?SCROLL?06B
+  +--> ?PR?MOVE_CURSOR_LEFT?06B
+  +--> ?PR?MOVE_CURSOR_RIGHT?06B
+  +--> ?PR?MOVE_CURSOR_UP?06B
+  +--> ?PR?MOVE_CURSOR_DOWN?06B
+  +--> ?PR?_LCD_DATA?06B
+
+?PR?DELAY5MS?06B
+  +--> ?PR?DELAY1MS?06B
+
+?PR?_LCD_COMMAND?06B
+  +--> ?PR?DELAY40US?06B
+
+?PR?DELAY2MS?06B
+  +--> ?PR?DELAY1MS?06B
+
+?PR?KEYPAD_SCAN?06B
+  +--> ?PR?DELAY5MS?06B
+  +--> ?PR?KEYPAD_WAITRELEASE?06B
+
+?PR?KEYPAD_WAITRELEASE?06B
+  +--> ?PR?KEYPAD_ANYPRESSED?06B
+  +--> ?PR?DELAY5MS?06B
+
+?PR?HANDLE_BACKSPACE?06B
+  +--> ?PR?LCD_REDRAW?06B
+  +--> ?PR?_LCD_COMMAND?06B
+
+?PR?LCD_REDRAW?06B
+  +--> ?PR?_LCD_COMMAND?06B
+  +--> ?PR?_LCD_DATA?06B
+
+?PR?_LCD_DATA?06B
+  +--> ?PR?DELAY40US?06B
+
+?PR?HANDLE_CLEARALL?06B
+  +--> ?PR?_LCD_COMMAND?06B
+  +--> ?PR?DELAY2MS?06B
+
+?PR?SCROLL?06B
+  +--> ?PR?LCD_REDRAW?06B
+  +--> ?PR?_LCD_COMMAND?06B
+
+?PR?MOVE_CURSOR_LEFT?06B
+  +--> ?PR?_LCD_COMMAND?06B
+
+?PR?MOVE_CURSOR_RIGHT?06B
+  +--> ?PR?_LCD_COMMAND?06B
+BL51 BANKED LINKER/LOCATER V4.21                                                      03/09/2026  13:21:28  PAGE 3
+
+
+
+?PR?MOVE_CURSOR_UP?06B
+  +--> ?PR?_LCD_COMMAND?06B
+
+?PR?MOVE_CURSOR_DOWN?06B
+  +--> ?PR?_LCD_COMMAND?06B
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0285H BYTE (31%) *
+******************************************************************************
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,55 @@
+BL51 BANKED LINKER/LOCATER V4.21                                                        03/09/2026  13:14:13  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V4.21, INVOKED BY:
+C:\C51\BIN\L51 06.OBJ TO 06.ABS
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  06.OBJ (06)
+  C:\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  06.ABS (06)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     005AH     UNIT         ?CO?06
+            CODE    085AH     0039H     UNIT         ?PR?MAIN?06
+            CODE    0893H     0023H     UNIT         ?PR?_PLAY?06
+            CODE    08B6H     0020H     UNIT         ?PR?_DELAY_MS?06
+            CODE    08D6H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   06.ABS (06)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?06
+
+?PR?MAIN?06
+  +--> ?CO?06
+  +--> ?PR?_PLAY?06
+  +--> ?PR?_DELAY_MS?06
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00D6H BYTE (10%) *
+******************************************************************************
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

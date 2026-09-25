@@ -1,0 +1,77 @@
+BL51 BANKED LINKER/LOCATER V4.21                                                        03/09/2026  13:17:44  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V4.21, INVOKED BY:
+C:\C51\BIN\L51 06B.OBJ TO 06B.ABS
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  06B.OBJ (06B)
+  C:\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  06B.ABS (06B)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?06B
+                    000AH     0016H                  *** GAP ***
+            BIT     0020H.0   0000H.2   UNIT         ?BI?06B
+                    0020H.2   0000H.6                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     000DH                  *** GAP ***
+            CODE    001BH     0003H     ABSOLUTE     
+                    001EH     07E2H                  *** GAP ***
+            CODE    0800H     0103H     UNIT         ?PR?TIMER1_ISR?06B
+            CODE    0903H     008CH     UNIT         ?C_C51STARTUP
+            CODE    098FH     005AH     UNIT         ?CO?06B
+            CODE    09E9H     003EH     UNIT         ?PR?TIMER0_ISR?06B
+            CODE    0A27H     0021H     UNIT         ?PR?MAIN?06B
+            CODE    0A48H     000BH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   06B.ABS (06B)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?PR?TIMER0_ISR?06B
+  +--> ?CO?06B
+
+*** NEW ROOT ***************************************************
+
+?PR?TIMER1_ISR?06B
+  +--> ?CO?06B
+
+*** NEW ROOT ***************************************************
+BL51 BANKED LINKER/LOCATER V4.21                                                      03/09/2026  13:17:44  PAGE 2
+
+
+
+?C_C51STARTUP
+  +--> ?PR?MAIN?06B
+  +--> ?C_INITSEG
+
+?PR?MAIN?06B
+  +--> ?CO?06B
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 01CCH BYTE (22%) *
+******************************************************************************
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
