@@ -1,0 +1,642 @@
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 1   
+
+
+C51 COMPILER V6.11, COMPILATION OF MODULE LAST
+OBJECT MODULE PLACED IN last.OBJ
+COMPILER INVOKED BY: c:\c51\bin\C51.EXE last.c
+
+stmt level    source
+
+   1          #include <REG51.H> 
+   2          
+   3          #include <string.h> 
+   4          
+   5           
+   6          
+   7          #define uchar unsigned char 
+   8          
+   9          #define uint unsigned int 
+  10          
+  11           
+  12          
+  13          sbit RS = P1^0; 
+  14          
+  15          sbit RW = P1^1; 
+  16          
+  17          sbit EN = P1^2; 
+  18          
+  19           
+  20          
+  21          sbit BZ = P1^3; 
+  22          
+  23          sbit S1 = P1^4; 
+  24          
+  25           
+  26          
+  27          #define MODE_XMAS 0 
+  28          
+  29          #define MODE_NEWYR 1 
+  30          
+  31          #define MODE_STAR 2 
+  32          
+  33           
+  34          
+  35          uchar currentMode = MODE_XMAS; 
+  36          
+  37           
+  38          
+  39          #define C4 0xF22A 
+  40          
+  41          #define D4 0xF3C2 
+  42          
+  43          #define E4 0xF536 
+  44          
+  45          #define F4 0xF5FD 
+  46          
+  47          #define G4 0xF729 
+  48          
+  49          #define A4 0xF7D0 
+  50          
+  51          #define B4 0xF8E4 
+  52          
+  53          #define C5 0xF914 
+  54          
+  55          #define D5 0xF9E0 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 2   
+
+  56          
+  57          #define E5 0xFA9A 
+  58          
+  59          #define F5 0xFAFE 
+  60          
+  61           
+  62          
+  63          uchar code christmasTree[8] = { 
+  64          
+  65          0x18,0x3C,0x7E,0x18,0x3C,0x7E,0xFF,0x18 
+  66          
+  67          }; 
+  68          
+  69           
+  70          
+  71          uchar code smileyFace[8] = { 
+  72          
+  73          0xFF,0x81,0xA5,0x81,0xA5,0xBD,0x81,0xFF 
+  74          
+  75          }; 
+  76          
+  77           
+  78          
+  79          uchar code neutralFace[8] = { 
+  80          
+  81          0xFF,0x81,0xA5,0x81,0x81,0xFF,0x81,0xFF 
+  82          
+  83          }; 
+  84          
+  85           
+  86          
+  87          uchar code star[8] = { 
+  88          
+  89          0x02,0x07,0x22,0x70,0x24,0x4E,0xE4,0x40 
+  90          
+  91          }; 
+  92          
+  93           
+  94          
+  95          unsigned int code Song[] = { 
+  96          
+  97           
+  98          
+  99          G4,C5,C5,D5,C5,B4,A4,A4,A4, 
+ 100          
+ 101          D5,D5,E5,D5,C5,B4,G4,G4, 
+ 102          
+ 103          E5,E5,F5,E5,D5,C5,A4, 
+ 104          
+ 105          G4,G4,A4,D5,B4,C5, 
+ 106          
+ 107          0,0,0,0,0, 
+ 108          
+ 109           
+ 110          
+ 111          E4,E4,F4,G4,G4,F4,E4,D4, 
+ 112          
+ 113          C4,C4,D4,E4,E4,D4,D4, 
+ 114          
+ 115          E4,E4,F4,G4,G4,F4,E4,D4, 
+ 116          
+ 117          C4,C4,D4,E4,D4,C4,C4, 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 3   
+
+ 118          
+ 119          0,0,0,0,0, 
+ 120          
+ 121           
+ 122          
+ 123          C4,C4,G4,G4,A4,A4,G4, 
+ 124          
+ 125          F4,F4,E4,E4,D4,D4,C4, 
+ 126          
+ 127          G4,G4,F4,F4,E4,E4,D4, 
+ 128          
+ 129          G4,G4,F4,F4,E4,E4,D4, 
+ 130          
+ 131          C4,C4,G4,G4,A4,A4,G4, 
+ 132          
+ 133          F4,F4,E4,E4,D4,D4,C4 
+ 134          
+ 135          }; 
+ 136          
+ 137           
+ 138          
+ 139          uchar code Dur[] = { 
+ 140          
+ 141           
+ 142          
+ 143          2,2,2,2,2,2,2,2,2, 
+ 144          
+ 145          2,2,2,2,2,2,2,2, 
+ 146          
+ 147          2,2,2,2,2,2,2, 
+ 148          
+ 149          2,2,2,2,2,2, 
+ 150          
+ 151          2,2,2,2,2, 
+ 152          
+ 153           
+ 154          
+ 155          2,2,2,2,2,2,2,2, 
+ 156          
+ 157          2,2,2,2,2,2, 
+ 158          
+ 159          2,2,2,2,2,2,2,2, 
+ 160          
+ 161          2,2,2,2,2, 
+ 162          
+ 163          2,2,2,2,2, 
+ 164          
+ 165           
+ 166          
+ 167          2,2,2,2,2,3, 
+ 168          
+ 169          2,2,2,2,2,3, 
+ 170          
+ 171          2,2,2,2,2,3, 
+ 172          
+ 173          2,2,2,2,2,3, 
+ 174          
+ 175          2,2,2,2,2,3, 
+ 176          
+ 177          2,2,2,2,2,4 
+ 178          
+ 179          }; 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 4   
+
+ 180          
+ 181           
+ 182          
+ 183          uchar idx = 0; 
+ 184          
+ 185          uchar tick = 0; 
+ 186          
+ 187          bit shortRest = 0; 
+ 188          
+ 189           
+ 190          
+ 191          char lcdText[24] = " Merry Christmas "; 
+ 192          
+ 193          uchar lcdPos = 0; 
+ 194          
+ 195          uchar lcdTick = 0; 
+ 196          
+ 197           
+ 198          
+ 199          bit blinkState = 1; 
+ 200          
+ 201          uchar blinkTick = 0; 
+ 202          
+ 203           
+ 204          
+ 205          bit smileToggle = 0; 
+ 206          
+ 207          uchar smileTick = 0; 
+ 208          
+ 209           
+ 210          
+ 211          void Delay1ms(){ 
+ 212   1      
+ 213   1      uint i; 
+ 214   1      
+ 215   1      for(i=0;i<120;i++); 
+ 216   1      
+ 217   1      } 
+ 218          
+ 219           
+ 220          
+ 221          void delay40us(){ 
+ 222   1      
+ 223   1      uchar i; 
+ 224   1      
+ 225   1      for(i=0;i<20;i++); 
+ 226   1      
+ 227   1      } 
+ 228          
+ 229           
+ 230          
+ 231          void Command(uchar cmd){ 
+ 232   1      
+ 233   1      P0 = cmd; 
+ 234   1      
+ 235   1      RS = 0; 
+ 236   1      
+ 237   1      RW = 0; 
+ 238   1      
+ 239   1      EN = 1; 
+ 240   1      
+ 241   1      delay40us(); 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 5   
+
+ 242   1      
+ 243   1      EN = 0; 
+ 244   1      
+ 245   1      } 
+ 246          
+ 247           
+ 248          
+ 249          void Data(uchar dat){ 
+ 250   1      
+ 251   1      P0 = dat; 
+ 252   1      
+ 253   1      RS = 1; 
+ 254   1      
+ 255   1      RW = 0; 
+ 256   1      
+ 257   1      EN = 1; 
+ 258   1      
+ 259   1      delay40us(); 
+ 260   1      
+ 261   1      EN = 0; 
+ 262   1      
+ 263   1      } 
+ 264          
+ 265           
+ 266          
+ 267          void LCD_Init(){ 
+ 268   1      
+ 269   1      Command(0x38); 
+ 270   1      
+ 271   1      Command(0x0F); 
+ 272   1      
+ 273   1      Command(0x06); 
+ 274   1      
+ 275   1      Command(0x01); 
+ 276   1      
+ 277   1      } 
+ 278          
+ 279           
+ 280          
+ 281          void LCD_Scroll(){ 
+ 282   1      
+ 283   1      uchar i; 
+ 284   1      
+ 285   1      Command(0x80); 
+ 286   1      
+ 287   1      for(i=0;i<16;i++){ 
+ 288   2      
+ 289   2      Data(lcdText[(lcdPos+i)%strlen(lcdText)]); 
+ 290   2      
+ 291   2      } 
+ 292   1      
+ 293   1      lcdPos = (lcdPos + 1) % strlen(lcdText); 
+ 294   1      
+ 295   1      } 
+ 296          
+ 297           
+ 298          
+ 299          void switchMode(){ 
+ 300   1      
+ 301   1      currentMode = (currentMode + 1) % 3; 
+ 302   1      
+ 303   1      lcdPos = 0; 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 6   
+
+ 304   1      
+ 305   1       
+ 306   1      
+ 307   1      tick = 0; 
+ 308   1      
+ 309   1      shortRest = 0; 
+ 310   1      
+ 311   1      smileTick = 0; 
+ 312   1      
+ 313   1      smileToggle = 0; 
+ 314   1      
+ 315   1       
+ 316   1      
+ 317   1      if(currentMode == MODE_XMAS){ 
+ 318   2      
+ 319   2      idx = 0; 
+ 320   2      
+ 321   2      strcpy(lcdText," Merry Christmas "); 
+ 322   2      
+ 323   2      } 
+ 324   1      
+ 325   1      else if(currentMode == MODE_NEWYR){ 
+ 326   2      
+ 327   2      idx = 36; 
+ 328   2      
+ 329   2      strcpy(lcdText," Happy New Year "); 
+ 330   2      
+ 331   2      } 
+ 332   1      
+ 333   1      else{ 
+ 334   2      
+ 335   2      idx = 71; 
+ 336   2      
+ 337   2      strcpy(lcdText," Twinkle Star "); 
+ 338   2      
+ 339   2      } 
+ 340   1      
+ 341   1       
+ 342   1      
+ 343   1      TH0 = Song[idx] >> 8; 
+ 344   1      
+ 345   1      TL0 = Song[idx]; 
+ 346   1      
+ 347   1      } 
+ 348          
+ 349           
+ 350          
+ 351          void checkButton(){ 
+ 352   1      
+ 353   1      static bit last = 1; 
+ 354   1      
+ 355   1       
+ 356   1      
+ 357   1      if(S1 == 0 && last == 1){ 
+ 358   2      
+ 359   2      Delay1ms(); 
+ 360   2      
+ 361   2      Delay1ms(); 
+ 362   2      
+ 363   2       
+ 364   2      
+ 365   2      if(S1 == 0){ 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 7   
+
+ 366   3      
+ 367   3      switchMode(); 
+ 368   3      
+ 369   3      } 
+ 370   2      
+ 371   2      } 
+ 372   1      
+ 373   1       
+ 374   1      
+ 375   1      last = S1; 
+ 376   1      
+ 377   1      } 
+ 378          
+ 379           
+ 380          
+ 381          void Timer0_ISR(void) interrupt 1{ 
+ 382   1      
+ 383   1       
+ 384   1      
+ 385   1      if(Song[idx] == 0 || shortRest){ 
+ 386   2      
+ 387   2      BZ = 0; 
+ 388   2      
+ 389   2      } 
+ 390   1      
+ 391   1      else{ 
+ 392   2      
+ 393   2      BZ = ~BZ; 
+ 394   2      
+ 395   2      } 
+ 396   1      
+ 397   1       
+ 398   1      
+ 399   1      TH0 = Song[idx] >> 8; 
+ 400   1      
+ 401   1      TL0 = Song[idx]; 
+ 402   1      
+ 403   1      } 
+ 404          
+ 405           
+ 406          
+ 407          void Timer1_ISR(void) interrupt 3{ 
+ 408   1      
+ 409   1       
+ 410   1      
+ 411   1      tick++; 
+ 412   1      
+ 413   1      lcdTick++; 
+ 414   1      
+ 415   1      blinkTick++; 
+ 416   1      
+ 417   1       
+ 418   1      
+ 419   1      if(blinkTick >= 6){ 
+ 420   2      
+ 421   2      blinkTick = 0; 
+ 422   2      
+ 423   2      blinkState = !blinkState; 
+ 424   2      
+ 425   2      } 
+ 426   1      
+ 427   1       
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 8   
+
+ 428   1      
+ 429   1      if(currentMode == MODE_NEWYR){ 
+ 430   2      
+ 431   2      smileTick++; 
+ 432   2      
+ 433   2      if(smileTick >= 12){ 
+ 434   3      
+ 435   3      smileTick = 0; 
+ 436   3      
+ 437   3      smileToggle = !smileToggle; 
+ 438   3      
+ 439   3      } 
+ 440   2      
+ 441   2      } 
+ 442   1      
+ 443   1       
+ 444   1      
+ 445   1      if(lcdTick >= 10){ 
+ 446   2      
+ 447   2      lcdTick = 0; 
+ 448   2      
+ 449   2      LCD_Scroll(); 
+ 450   2      
+ 451   2      } 
+ 452   1      
+ 453   1       
+ 454   1      
+ 455   1      if(!shortRest && tick >= Dur[idx]*2){ 
+ 456   2      
+ 457   2      shortRest = 1; 
+ 458   2      
+ 459   2      tick = 0; 
+ 460   2      
+ 461   2      return; 
+ 462   2      
+ 463   2      } 
+ 464   1      
+ 465   1       
+ 466   1      
+ 467   1      if(shortRest && tick >= 1){ 
+ 468   2      
+ 469   2      shortRest = 0; 
+ 470   2      
+ 471   2      tick = 0; 
+ 472   2      
+ 473   2      idx++; 
+ 474   2      
+ 475   2       
+ 476   2      
+ 477   2      if(currentMode == MODE_XMAS && idx > 35) idx = 0; 
+ 478   2      
+ 479   2      if(currentMode == MODE_NEWYR && idx > 70) idx = 36; 
+ 480   2      
+ 481   2      if(currentMode == MODE_STAR && idx > 112) idx = 71; 
+ 482   2      
+ 483   2       
+ 484   2      
+ 485   2      TH0 = Song[idx] >> 8; 
+ 486   2      
+ 487   2      TL0 = Song[idx]; 
+ 488   2      
+ 489   2      } 
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 9   
+
+ 490   1      
+ 491   1      } 
+ 492          
+ 493           
+ 494          
+ 495          void displayPattern(){ 
+ 496   1      
+ 497   1      uchar r,p; 
+ 498   1      
+ 499   1       
+ 500   1      
+ 501   1      for(r=0;r<8;r++){ 
+ 502   2      
+ 503   2       
+ 504   2      
+ 505   2      P3 = ~(1<<r); 
+ 506   2      
+ 507   2       
+ 508   2      
+ 509   2      if(blinkState == 0 && currentMode != MODE_NEWYR){ 
+ 510   3      
+ 511   3      p = 0xFF; 
+ 512   3      
+ 513   3      } 
+ 514   2      
+ 515   2      else{ 
+ 516   3      
+ 517   3      if(currentMode == MODE_XMAS) 
+ 518   3      
+ 519   3      p = christmasTree[r]; 
+ 520   3      
+ 521   3      else if(currentMode == MODE_NEWYR) 
+ 522   3      
+ 523   3      p = smileToggle ? smileyFace[r] : neutralFace[r]; 
+ 524   3      
+ 525   3      else 
+ 526   3      
+ 527   3      p = star[r]; 
+ 528   3      
+ 529   3      } 
+ 530   2      
+ 531   2       
+ 532   2      
+ 533   2      P2 = ~p; 
+ 534   2      
+ 535   2       
+ 536   2      
+ 537   2      Delay1ms(); 
+ 538   2      
+ 539   2       
+ 540   2      
+ 541   2      P3 = 0xFF; 
+ 542   2      
+ 543   2      } 
+ 544   1      
+ 545   1      } 
+ 546          
+ 547           
+ 548          
+ 549          void main(){ 
+ 550   1      
+ 551   1       
+C51 COMPILER V6.11  LAST                                                                   03/09/2026 13:25:38 PAGE 10  
+
+ 552   1      
+ 553   1      P0 = P1 = P2 = P3 = 0xFF; 
+ 554   1      
+ 555   1       
+ 556   1      
+ 557   1      LCD_Init(); 
+ 558   1      
+ 559   1       
+ 560   1      
+ 561   1      TMOD = 0x11; 
+ 562   1      
+ 563   1       
+ 564   1      
+ 565   1      TH0 = Song[0] >> 8; 
+ 566   1      
+ 567   1      TL0 = Song[0]; 
+ 568   1      
+ 569   1       
+ 570   1      
+ 571   1      TH1 = 0x3C; 
+ 572   1      
+ 573   1      TL1 = 0xB0; 
+ 574   1      
+ 575   1       
+ 576   1      
+ 577   1      ET0 = 1; 
+ 578   1      
+ 579   1      ET1 = 1; 
+ 580   1      
+ 581   1      EA = 1; 
+ 582   1      
+ 583   1       
+ 584   1      
+ 585   1      TR0 = 1; 
+ 586   1      
+ 587   1      TR1 = 1; 
+ 588   1      
+ 589   1       
+ 590   1      
+ 591   1      while(1){ 
+ 592   2      
+ 593   2      displayPattern(); 
+ 594   2      
+ 595   2      checkButton(); 
+ 596   2      
+ 597   2      } 
+ 598   1      
+ 599   1      } 
+ 600          
+ 601           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    739    ----
+   CONSTANT SIZE    =    409    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     31       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

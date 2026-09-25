@@ -1,0 +1,1171 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000     02 00 03                      LJMP    MAIN 
+      2    0003                           
+      3    0003                            
+      4    0003                           
+      5    0003                           MAIN: 
+      6    0003                           
+      7    0003     75 81 60                      MOV     SP, #60H 
+      8    0006                           
+      9    0006     11 6B                         ACALL   INIT_GAME 
+     10    0008                           
+     11    0008                            
+     12    0008                           
+     13    0008                           GAME_LOOP: 
+     14    0008                           
+     15    0008     20 B1 09                      JB      P3.1, NO_RESET 
+     16    000B                           
+     17    000B     11 6B                         ACALL   INIT_GAME 
+     18    000D                           
+     19    000D     80 00                         SJMP    WAIT_RESET_RELEASE 
+     20    000F                           
+     21    000F                            
+     22    000F                           
+     23    000F                           WAIT_RESET_RELEASE: 
+     24    000F                           
+     25    000F     30 B1 FD                      JNB     P3.1, WAIT_RESET_RELEASE 
+     26    0012                           
+     27    0012     80 F4                         SJMP    GAME_LOOP 
+     28    0014                           
+     29    0014                            
+     30    0014                           
+     31    0014                           NO_RESET: 
+     32    0014                           
+     33    0014     E5 47                         MOV     A, 47H 
+     34    0016                           
+     35    0016     B4 00 35                      CJNE    A, #0, GAME_OVER_BLINK 
+     36    0019                           
+     37    0019                            
+     38    0019                           
+     39    0019     11 B2                         ACALL   DISPLAY_ALL 
+     40    001B                           
+     41    001B     31 2B                         ACALL   CHECK_KEY 
+     42    001D                           
+     43    001D     71 07                         ACALL   DELAY_5MS 
+     44    001F                           
+     45    001F                            
+     46    001F                           
+     47    001F     05 4A                         INC     4AH 
+     48    0021                           
+     49    0021     E5 4A                         MOV     A, 4AH 
+     50    0023                           
+     51    0023     70 02                         JNZ     CHECK_SPEED 
+     52    0025                           
+     53    0025     05 4B                         INC     4BH 
+     54    0027                           
+     55    0027                            
+     56    0027                           
+     57    0027                           CHECK_SPEED: 
+     58    0027                           
+     59    0027     E5 4B                         MOV     A, 4BH 
+     60    0029                           
+     61    0029     B5 49 02                      CJNE    A, 49H, CHECK_SPEED_L 
+     62    002C                           
+     63    002C     80 04                         SJMP    CHECK_SPEED_EQUAL_H 
+     64    002E                           
+     65    002E                            
+     66    002E                           
+     67    002E                           CHECK_SPEED_L: 
+     68    002E                           
+     69    002E     40 D8                         JC      GAME_LOOP 
+     70    0030                           
+     71    0030     80 09                         SJMP    DO_MOVE 
+     72    0032                           
+     73    0032                            
+     74    0032                           
+     75    0032                           CHECK_SPEED_EQUAL_H: 
+     76    0032                           
+     77    0032     E5 4A                         MOV     A, 4AH 
+     78    0034                           
+     79    0034     B5 48 02                      CJNE    A, 48H, CHECK_SPEED_L2 
+     80    0037                           
+     81    0037     80 02                         SJMP    DO_MOVE 
+     82    0039                           
+     83    0039                            
+     84    0039                           
+     85    0039                           CHECK_SPEED_L2: 
+     86    0039                           
+     87    0039     40 CD                         JC      GAME_LOOP 
+     88    003B                           
+     89    003B                            
+     90    003B                           
+     91    003B                           DO_MOVE: 
+     92    003B                           
+     93    003B     75 4A 00                      MOV     4AH, #0 
+     94    003E                           
+     95    003E     75 4B 00                      MOV     4BH, #0 
+     96    0041                           
+     97    0041                            
+     98    0041                           
+     99    0041     E5 45                         MOV     A, 45H 
+    100    0043                           
+    101    0043     F5 43                         MOV     43H, A 
+    102    0045                           
+    103    0045     E5 46                         MOV     A, 46H 
+    104    0047                           
+    105    0047     F5 44                         MOV     44H, A 
+    106    0049                           
+    107    0049                            
+    108    0049                           
+    109    0049     31 A8                         ACALL   MOVE_SNAKE 
+    110    004B                           
+    111    004B     02 00 08                      LJMP    GAME_LOOP 
+    112    004E                           
+    113    004E                            
+    114    004E                           
+    115    004E                           GAME_OVER_BLINK: 
+    116    004E                           
+    117    004E     30 B1 12                      JNB     P3.1, RESET_FROM_GAME_OVER 
+    118    0051                           
+    119    0051                            
+    120    0051                           
+    121    0051     75 80 00                      MOV     P0, #00H 
+    122    0054                           
+    123    0054     75 90 00                      MOV     P1, #00H 
+    124    0057                           
+    125    0057     71 10                         ACALL   DELAY_LONG 
+    126    0059                           
+    127    0059     75 80 FF                      MOV     P0, #0FFH 
+    128    005C                           
+    129    005C     75 90 FF                      MOV     P1, #0FFH 
+    130    005F                           
+    131    005F     71 10                         ACALL   DELAY_LONG 
+    132    0061                           
+    133    0061     80 EB                         SJMP    GAME_OVER_BLINK 
+    134    0063                           
+    135    0063                            
+    136    0063                           
+    137    0063                           RESET_FROM_GAME_OVER: 
+    138    0063                           
+    139    0063     11 6B                         ACALL   INIT_GAME 
+    140    0065                           
+    141    0065                            
+    142    0065                           
+    143    0065                           WAIT_RESET_GO: 
+    144    0065                           
+    145    0065     30 B1 FD                      JNB     P3.1, WAIT_RESET_GO 
+    146    0068                           
+    147    0068     02 00 08                      LJMP    GAME_LOOP 
+    148    006B                           
+    149    006B                            
+    150    006B                           
+    151    006B                           INIT_GAME: 
+    152    006B                           
+    153    006B     75 80 FF                      MOV     P0, #0FFH 
+    154    006E                           
+    155    006E     75 90 FF                      MOV     P1, #0FFH 
+    156    0071                           
+    157    0071     75 B0 FF                      MOV     P3, #0FFH 
+    158    0074                           
+    159    0074                            
+    160    0074                           
+    161    0074     75 89 01                      MOV     TMOD, #01H 
+    162    0077                           
+    163    0077     75 8C 00                      MOV     TH0, #0 
+    164    007A                           
+    165    007A     75 8A 00                      MOV     TL0, #0 
+    166    007D                           
+    167    007D     D2 8C                         SETB    TR0 
+    168    007F                           
+    169    007F                            
+    170    007F                           
+    171    007F     75 50 02                      MOV     50H, #2 
+    172    0082                           
+    173    0082     75 70 03                      MOV     70H, #3 
+    174    0085                           
+    175    0085     75 51 01                      MOV     51H, #1 
+    176    0088                           
+    177    0088     75 71 03                      MOV     71H, #3 
+    178    008B                           
+    179    008B     75 52 00                      MOV     52H, #0 
+    180    008E                           
+    181    008E     75 72 03                      MOV     72H, #3 
+    182    0091                           
+    183    0091                            
+    184    0091                           
+    185    0091     75 42 03                      MOV     42H, #3 
+    186    0094                           
+    187    0094     75 43 01                      MOV     43H, #1 
+    188    0097                           
+    189    0097     75 44 00                      MOV     44H, #0 
+    190    009A                           
+    191    009A     75 45 01                      MOV     45H, #1 
+    192    009D                           
+    193    009D     75 46 00                      MOV     46H, #0 
+    194    00A0                           
+    195    00A0     75 47 00                      MOV     47H, #0 
+    196    00A3                           
+    197    00A3     75 48 C8                      MOV     48H, #200 
+    198    00A6                           
+    199    00A6     75 49 00                      MOV     49H, #0 
+    200    00A9                           
+    201    00A9     75 4A 00                      MOV     4AH, #0 
+    202    00AC                           
+    203    00AC     75 4B 00                      MOV     4BH, #0 
+    204    00AF                           
+    205    00AF                            
+    206    00AF                           
+    207    00AF     51 A2                         ACALL   NEW_FOOD 
+    208    00B1                           
+    209    00B1     22                            RET 
+    210    00B2                           
+    211    00B2                            
+    212    00B2                           
+    213    00B2                           DISPLAY_ALL: 
+    214    00B2                           
+    215    00B2     75 4C 00                      MOV     4CH, #0 
+    216    00B5                           
+    217    00B5                            
+    218    00B5                           
+    219    00B5                           DISPLAY_SNAKE: 
+    220    00B5                           
+    221    00B5     E5 4C                         MOV     A, 4CH 
+    222    00B7                           
+    223    00B7     B5 42 02                      CJNE    A, 42H, DISPLAY_SNAKE_DO 
+    224    00BA                           
+    225    00BA     80 14                         SJMP    DISPLAY_FOOD_PART 
+    226    00BC                           
+    227    00BC                            
+    228    00BC                           
+    229    00BC                           DISPLAY_SNAKE_DO: 
+    230    00BC                           
+    231    00BC     E5 4C                         MOV     A, 4CH 
+    232    00BE                           
+    233    00BE     24 50                         ADD     A, #50H 
+    234    00C0                           
+    235    00C0     F8                            MOV     R0, A 
+    236    00C1                           
+    237    00C1     E6                            MOV     A, @R0 
+    238    00C2                           
+    239    00C2     FC                            MOV     R4, A 
+    240    00C3                           
+    241    00C3                            
+    242    00C3                           
+    243    00C3     E5 4C                         MOV     A, 4CH 
+    244    00C5                           
+    245    00C5     24 70                         ADD     A, #70H 
+    246    00C7                           
+    247    00C7     F8                            MOV     R0, A 
+    248    00C8                           
+    249    00C8     E6                            MOV     A, @R0 
+    250    00C9                           
+    251    00C9     FD                            MOV     R5, A 
+    252    00CA                           
+    253    00CA                            
+    254    00CA                           
+    255    00CA     11 D9                         ACALL   DISPLAY_DOT 
+    256    00CC                           
+    257    00CC                            
+    258    00CC                           
+    259    00CC     05 4C                         INC     4CH 
+    260    00CE                           
+    261    00CE     80 E5                         SJMP    DISPLAY_SNAKE 
+    262    00D0                           
+    263    00D0                            
+    264    00D0                           
+    265    00D0                           DISPLAY_FOOD_PART: 
+    266    00D0                           
+    267    00D0     AC 40                         MOV     R4, 40H 
+    268    00D2                           
+    269    00D2     AD 41                         MOV     R5, 41H 
+    270    00D4                           
+    271    00D4     11 D9                         ACALL   DISPLAY_DOT 
+    272    00D6                           
+    273    00D6                            
+    274    00D6                           
+    275    00D6     31 04                         ACALL   DISPLAY_BLOCKS 
+    276    00D8                           
+    277    00D8     22                            RET 
+    278    00D9                           
+    279    00D9                            
+    280    00D9                           
+    281    00D9                           DISPLAY_DOT: 
+    282    00D9                           
+    283    00D9     74 01                         MOV     A, #1 
+    284    00DB                           
+    285    00DB     AE 04                         MOV     R6, R4 
+    286    00DD                           
+    287    00DD                            
+    288    00DD                           
+    289    00DD                           DOT_X: 
+    290    00DD                           
+    291    00DD     BE 00 02                      CJNE    R6, #0, DOT_X_DO 
+    292    00E0                           
+    293    00E0     80 04                         SJMP    DOT_X_END 
+    294    00E2                           
+    295    00E2                            
+    296    00E2                           
+    297    00E2                           DOT_X_DO: 
+    298    00E2                           
+    299    00E2     23                            RL      A 
+    300    00E3                           
+    301    00E3     1E                            DEC     R6 
+    302    00E4                           
+    303    00E4     80 F7                         SJMP    DOT_X 
+    304    00E6                           
+    305    00E6                            
+    306    00E6                           
+    307    00E6                           DOT_X_END: 
+    308    00E6                           
+    309    00E6     F4                            CPL     A 
+    310    00E7                           
+    311    00E7     F5 80                         MOV     P0, A 
+    312    00E9                           
+    313    00E9                            
+    314    00E9                           
+    315    00E9     74 01                         MOV     A, #1 
+    316    00EB                           
+    317    00EB     AE 05                         MOV     R6, R5 
+    318    00ED                           
+    319    00ED                            
+    320    00ED                           
+    321    00ED                           DOT_Y: 
+    322    00ED                           
+    323    00ED     BE 00 02                      CJNE    R6, #0, DOT_Y_DO 
+    324    00F0                           
+    325    00F0     80 04                         SJMP    DOT_Y_END 
+    326    00F2                           
+    327    00F2                            
+    328    00F2                           
+    329    00F2                           DOT_Y_DO: 
+    330    00F2                           
+    331    00F2     23                            RL      A 
+    332    00F3                           
+    333    00F3     1E                            DEC     R6 
+    334    00F4                           
+    335    00F4     80 F7                         SJMP    DOT_Y 
+    336    00F6                           
+    337    00F6                            
+    338    00F6                           
+    339    00F6                           DOT_Y_END: 
+    340    00F6                           
+    341    00F6     F4                            CPL     A 
+    342    00F7                           
+    343    00F7     F5 90                         MOV     P1, A 
+    344    00F9                           
+    345    00F9                            
+    346    00F9                           
+    347    00F9     7E 32                         MOV     R6, #50 
+    348    00FB                           
+    349    00FB                            
+    350    00FB                           
+    351    00FB                           DOT_DLY: 
+    352    00FB                           
+    353    00FB     DE FE                         DJNZ    R6, DOT_DLY 
+    354    00FD                           
+    355    00FD                            
+    356    00FD                           
+    357    00FD     75 80 FF                      MOV     P0, #0FFH 
+    358    0100                           
+    359    0100     75 90 FF                      MOV     P1, #0FFH 
+    360    0103                           
+    361    0103     22                            RET 
+    362    0104                           
+    363    0104                            
+    364    0104                           
+    365    0104                           DISPLAY_BLOCKS: 
+    366    0104                           
+    367    0104     90 03 17                      MOV     DPTR, #BLOCK_DATA 
+    368    0107                           
+    369    0107     75 4C 00                      MOV     4CH, #0 
+    370    010A                           
+    371    010A                            
+    372    010A                           
+    373    010A                           DISP_BLOCK_LOOP: 
+    374    010A                           
+    375    010A     E5 4C                         MOV     A, 4CH 
+    376    010C                           
+    377    010C     B4 03 01                      CJNE    A, #3, DISP_BLOCK_DO 
+    378    010F                           
+    379    010F     22                            RET 
+    380    0110                           
+    381    0110                            
+    382    0110                           
+    383    0110                           DISP_BLOCK_DO: 
+    384    0110                           
+    385    0110     E5 4C                         MOV     A, 4CH 
+    386    0112                           
+    387    0112     93                            MOVC    A, @A+DPTR 
+    388    0113                           
+    389    0113     FC                            MOV     R4, A 
+    390    0114                           
+    391    0114                            
+    392    0114                           
+    393    0114     E5 4C                         MOV     A, 4CH 
+    394    0116                           
+    395    0116     24 03                         ADD     A, #3 
+    396    0118                           
+    397    0118     93                            MOVC    A, @A+DPTR 
+    398    0119                           
+    399    0119     FD                            MOV     R5, A 
+    400    011A                           
+    401    011A                            
+    402    011A                           
+    403    011A     11 D9                         ACALL   DISPLAY_DOT 
+    404    011C                           
+    405    011C                            
+    406    011C                           
+    407    011C     EC                            MOV     A, R4 
+    408    011D                           
+    409    011D     B4 07 02                      CJNE    A, #7, DISP_RIGHT 
+    410    0120                           
+    411    0120     80 05                         SJMP    DISP_BLOCK_NEXT 
+    412    0122                           
+    413    0122                            
+    414    0122                           
+    415    0122                           DISP_RIGHT: 
+    416    0122                           
+    417    0122     50 03                         JNC     DISP_BLOCK_NEXT 
+    418    0124                           
+    419    0124     0C                            INC     R4 
+    420    0125                           
+    421    0125     11 D9                         ACALL   DISPLAY_DOT 
+    422    0127                           
+    423    0127                            
+    424    0127                           
+    425    0127                           DISP_BLOCK_NEXT: 
+    426    0127                           
+    427    0127     05 4C                         INC     4CH 
+    428    0129                           
+    429    0129     80 DF                         SJMP    DISP_BLOCK_LOOP 
+    430    012B                           
+    431    012B                            
+    432    012B                           
+    433    012B                           CHECK_KEY: 
+    434    012B                           
+    435    012B     20 B4 0B                      JB      P3.4, CHK_DOWN 
+    436    012E                           
+    437    012E     E5 44                         MOV     A, 44H 
+    438    0130                           
+    439    0130     B4 00 06                      CJNE    A, #0, CHK_DOWN 
+    440    0133                           
+    441    0133     75 45 00                      MOV     45H, #0 
+    442    0136                           
+    443    0136     75 46 FF                      MOV     46H, #0FFH 
+    444    0139                           
+    445    0139                            
+    446    0139                           
+    447    0139                           CHK_DOWN: 
+    448    0139                           
+    449    0139     20 B5 0B                      JB      P3.5, CHK_LEFT 
+    450    013C                           
+    451    013C     E5 44                         MOV     A, 44H 
+    452    013E                           
+    453    013E     B4 00 06                      CJNE    A, #0, CHK_LEFT 
+    454    0141                           
+    455    0141     75 45 00                      MOV     45H, #0 
+    456    0144                           
+    457    0144     75 46 01                      MOV     46H, #1 
+    458    0147                           
+    459    0147                            
+    460    0147                           
+    461    0147                           CHK_LEFT: 
+    462    0147                           
+    463    0147     20 B6 0B                      JB      P3.6, CHK_RIGHT 
+    464    014A                           
+    465    014A     E5 43                         MOV     A, 43H 
+    466    014C                           
+    467    014C     B4 00 06                      CJNE    A, #0, CHK_RIGHT 
+    468    014F                           
+    469    014F     75 45 FF                      MOV     45H, #0FFH 
+    470    0152                           
+    471    0152     75 46 00                      MOV     46H, #0 
+    472    0155                           
+    473    0155                            
+    474    0155                           
+    475    0155                           CHK_RIGHT: 
+    476    0155                           
+    477    0155     20 B7 0B                      JB      P3.7, CHK_SPEEDUP 
+    478    0158                           
+    479    0158     E5 43                         MOV     A, 43H 
+    480    015A                           
+    481    015A     B4 00 06                      CJNE    A, #0, CHK_SPEEDUP 
+    482    015D                           
+    483    015D     75 45 01                      MOV     45H, #1 
+    484    0160                           
+    485    0160     75 46 00                      MOV     46H, #0 
+    486    0163                           
+    487    0163                            
+    488    0163                           
+    489    0163                           CHK_SPEEDUP: 
+    490    0163                           
+    491    0163     20 B2 1D                      JB      P3.2, CHK_SPEEDDOWN 
+    492    0166                           
+    493    0166     E5 49                         MOV     A, 49H 
+    494    0168                           
+    495    0168     70 09                         JNZ     SPEED_OK_DEC 
+    496    016A                           
+    497    016A     E5 48                         MOV     A, 48H 
+    498    016C                           
+    499    016C     B4 64 02                      CJNE    A, #100, CHK_SPEED_L1 
+    500    016F                           
+    501    016F     80 12                         SJMP    CHK_SPEEDDOWN 
+    502    0171                           
+    503    0171                            
+    504    0171                           
+    505    0171                           CHK_SPEED_L1: 
+    506    0171                           
+    507    0171     40 10                         JC      CHK_SPEEDDOWN 
+    508    0173                           
+    509    0173                            
+    510    0173                           
+    511    0173                           SPEED_OK_DEC: 
+    512    0173                           
+    513    0173     E5 48                         MOV     A, 48H 
+    514    0175                           
+    515    0175     C3                            CLR     C 
+    516    0176                           
+    517    0176     94 14                         SUBB    A, #20 
+    518    0178                           
+    519    0178     F5 48                         MOV     48H, A 
+    520    017A                           
+    521    017A     E5 49                         MOV     A, 49H 
+    522    017C                           
+    523    017C     94 00                         SUBB    A, #0 
+    524    017E                           
+    525    017E     F5 49                         MOV     49H, A 
+    526    0180                           
+    527    0180                            
+    528    0180                           
+    529    0180                           WAIT_SPEEDUP: 
+    530    0180                           
+    531    0180     30 B2 FD                      JNB     P3.2, WAIT_SPEEDUP 
+    532    0183                           
+    533    0183                            
+    534    0183                           
+    535    0183                           CHK_SPEEDDOWN: 
+    536    0183                           
+    537    0183     20 B3 21                      JB      P3.3, CHK_KEY_END 
+    538    0186                           
+    539    0186     E5 49                         MOV     A, 49H 
+    540    0188                           
+    541    0188     B4 01 02                      CJNE    A, #1, CHK_SPEED_H 
+    542    018B                           
+    543    018B     80 1A                         SJMP    CHK_KEY_END 
+    544    018D                           
+    545    018D                            
+    546    018D                           
+    547    018D                           CHK_SPEED_H: 
+    548    018D                           
+    549    018D     40 09                         JC      SPEED_OK_INC 
+    550    018F                           
+    551    018F     E5 48                         MOV     A, 48H 
+    552    0191                           
+    553    0191     B4 90 02                      CJNE    A, #144, CHK_SPEED_L2 
+    554    0194                           
+    555    0194     80 11                         SJMP    CHK_KEY_END 
+    556    0196                           
+    557    0196                            
+    558    0196                           
+    559    0196                           CHK_SPEED_L2: 
+    560    0196                           
+    561    0196     50 0F                         JNC     CHK_KEY_END 
+    562    0198                           
+    563    0198                            
+    564    0198                           
+    565    0198                           SPEED_OK_INC: 
+    566    0198                           
+    567    0198     E5 48                         MOV     A, 48H 
+    568    019A                           
+    569    019A     24 14                         ADD     A, #20 
+    570    019C                           
+    571    019C     F5 48                         MOV     48H, A 
+    572    019E                           
+    573    019E     E5 49                         MOV     A, 49H 
+    574    01A0                           
+    575    01A0     34 00                         ADDC    A, #0 
+    576    01A2                           
+    577    01A2     F5 49                         MOV     49H, A 
+    578    01A4                           
+    579    01A4                            
+    580    01A4                           
+    581    01A4                           WAIT_SPEEDDOWN: 
+    582    01A4                           
+    583    01A4     30 B3 FD                      JNB     P3.3, WAIT_SPEEDDOWN 
+    584    01A7                           
+    585    01A7                            
+    586    01A7                           
+    587    01A7                           CHK_KEY_END: 
+    588    01A7                           
+    589    01A7     22                            RET 
+    590    01A8                           
+    591    01A8                            
+    592    01A8                           
+    593    01A8                           MOVE_SNAKE: 
+    594    01A8                           
+    595    01A8     E5 50                         MOV     A, 50H 
+    596    01AA                           
+    597    01AA     25 43                         ADD     A, 43H 
+    598    01AC                           
+    599    01AC     F5 4D                         MOV     4DH, A 
+    600    01AE                           
+    601    01AE                            
+    602    01AE                           
+    603    01AE     E5 70                         MOV     A, 70H 
+    604    01B0                           
+    605    01B0     25 44                         ADD     A, 44H 
+    606    01B2                           
+    607    01B2     F5 4E                         MOV     4EH, A 
+    608    01B4                           
+    609    01B4                            
+    610    01B4                           
+    611    01B4     E5 4D                         MOV     A, 4DH 
+    612    01B6                           
+    613    01B6     B4 08 02                      CJNE    A, #8, CHK_WALL_X 
+    614    01B9                           
+    615    01B9     80 5E                         SJMP    COLLISION 
+    616    01BB                           
+    617    01BB                            
+    618    01BB                           
+    619    01BB                           CHK_WALL_X: 
+    620    01BB                           
+    621    01BB     50 5C                         JNC     COLLISION 
+    622    01BD                           
+    623    01BD                            
+    624    01BD                           
+    625    01BD     E5 4E                         MOV     A, 4EH 
+    626    01BF                           
+    627    01BF     B4 08 02                      CJNE    A, #8, CHK_WALL_Y 
+    628    01C2                           
+    629    01C2     80 55                         SJMP    COLLISION 
+    630    01C4                           
+    631    01C4                            
+    632    01C4                           
+    633    01C4                           CHK_WALL_Y: 
+    634    01C4                           
+    635    01C4     50 53                         JNC     COLLISION 
+    636    01C6                           
+    637    01C6                            
+    638    01C6                           
+    639    01C6     75 4C 00                      MOV     4CH, #0 
+    640    01C9                           
+    641    01C9                            
+    642    01C9                           
+    643    01C9                           CHK_SELF: 
+    644    01C9                           
+    645    01C9     E5 4C                         MOV     A, 4CH 
+    646    01CB                           
+    647    01CB     B5 42 02                      CJNE    A, 42H, CHK_SELF_DO 
+    648    01CE                           
+    649    01CE     80 20                         SJMP    CHK_BLOCKS 
+    650    01D0                           
+    651    01D0                            
+    652    01D0                           
+    653    01D0                           CHK_SELF_DO: 
+    654    01D0                           
+    655    01D0     E5 4C                         MOV     A, 4CH 
+    656    01D2                           
+    657    01D2     24 50                         ADD     A, #50H 
+    658    01D4                           
+    659    01D4     F8                            MOV     R0, A 
+    660    01D5                           
+    661    01D5     E6                            MOV     A, @R0 
+    662    01D6                           
+    663    01D6     F5 4F                         MOV     4FH, A 
+    664    01D8                           
+    665    01D8                            
+    666    01D8                           
+    667    01D8     E5 4D                         MOV     A, 4DH 
+    668    01DA                           
+    669    01DA     B5 4F 0F                      CJNE    A, 4FH, CHK_SELF_NEXT 
+    670    01DD                           
+    671    01DD                            
+    672    01DD                           
+    673    01DD     E5 4C                         MOV     A, 4CH 
+    674    01DF                           
+    675    01DF     24 70                         ADD     A, #70H 
+    676    01E1                           
+    677    01E1     F8                            MOV     R0, A 
+    678    01E2                           
+    679    01E2     E6                            MOV     A, @R0 
+    680    01E3                           
+    681    01E3     F5 4F                         MOV     4FH, A 
+    682    01E5                           
+    683    01E5                            
+    684    01E5                           
+    685    01E5     E5 4E                         MOV     A, 4EH 
+    686    01E7                           
+    687    01E7     B5 4F 02                      CJNE    A, 4FH, CHK_SELF_NEXT 
+    688    01EA                           
+    689    01EA                            
+    690    01EA                           
+    691    01EA     80 2D                         SJMP    COLLISION 
+    692    01EC                           
+    693    01EC                            
+    694    01EC                           
+    695    01EC                           CHK_SELF_NEXT: 
+    696    01EC                           
+    697    01EC     05 4C                         INC     4CH 
+    698    01EE                           
+    699    01EE     80 D9                         SJMP    CHK_SELF 
+    700    01F0                           
+    701    01F0                            
+    702    01F0                           
+    703    01F0                           CHK_BLOCKS: 
+    704    01F0                           
+    705    01F0     90 03 17                      MOV     DPTR, #BLOCK_DATA 
+    706    01F3                           
+    707    01F3     75 4C 00                      MOV     4CH, #0 
+    708    01F6                           
+    709    01F6                            
+    710    01F6                           
+    711    01F6                           CHK_BLOCK_LOOP: 
+    712    01F6                           
+    713    01F6     E5 4C                         MOV     A, 4CH 
+    714    01F8                           
+    715    01F8     B4 03 02                      CJNE    A, #3, CHK_BLOCK_DO 
+    716    01FB                           
+    717    01FB     80 20                         SJMP    NO_COLLISION 
+    718    01FD                           
+    719    01FD                            
+    720    01FD                           
+    721    01FD                           CHK_BLOCK_DO: 
+    722    01FD                           
+    723    01FD     E5 4C                         MOV     A, 4CH 
+    724    01FF                           
+    725    01FF     93                            MOVC    A, @A+DPTR 
+    726    0200                           
+    727    0200     F5 4F                         MOV     4FH, A 
+    728    0202                           
+    729    0202                            
+    730    0202                           
+    731    0202     E5 4D                         MOV     A, 4DH 
+    732    0204                           
+    733    0204     B5 4F 0E                      CJNE    A, 4FH, CHK_BLOCK_NEXT 
+    734    0207                           
+    735    0207                            
+    736    0207                           
+    737    0207     E5 4C                         MOV     A, 4CH 
+    738    0209                           
+    739    0209     24 03                         ADD     A, #3 
+    740    020B                           
+    741    020B     93                            MOVC    A, @A+DPTR 
+    742    020C                           
+    743    020C     F5 4F                         MOV     4FH, A 
+    744    020E                           
+    745    020E                            
+    746    020E                           
+    747    020E     E5 4E                         MOV     A, 4EH 
+    748    0210                           
+    749    0210     B5 4F 02                      CJNE    A, 4FH, CHK_BLOCK_NEXT 
+    750    0213                           
+    751    0213                            
+    752    0213                           
+    753    0213     80 04                         SJMP    COLLISION 
+    754    0215                           
+    755    0215                            
+    756    0215                           
+    757    0215                           CHK_BLOCK_NEXT: 
+    758    0215                           
+    759    0215     05 4C                         INC     4CH 
+    760    0217                           
+    761    0217     80 DD                         SJMP    CHK_BLOCK_LOOP 
+    762    0219                           
+    763    0219                            
+    764    0219                           
+    765    0219                           COLLISION: 
+    766    0219                           
+    767    0219     75 47 01                      MOV     47H, #1 
+    768    021C                           
+    769    021C     22                            RET 
+    770    021D                           
+    771    021D                            
+    772    021D                           
+    773    021D                           NO_COLLISION: 
+    774    021D                           
+    775    021D     E5 4D                         MOV     A, 4DH 
+    776    021F                           
+    777    021F     B5 40 39                      CJNE    A, 40H, NO_FOOD 
+    778    0222                           
+    779    0222     E5 4E                         MOV     A, 4EH 
+    780    0224                           
+    781    0224     B5 41 34                      CJNE    A, 41H, NO_FOOD 
+    782    0227                           
+    783    0227                            
+    784    0227                           
+    785    0227     05 42                         INC     42H 
+    786    0229                           
+    787    0229                            
+    788    0229                           
+    789    0229     E5 42                         MOV     A, 42H 
+    790    022B                           
+    791    022B     14                            DEC     A 
+    792    022C                           
+    793    022C     F5 4C                         MOV     4CH, A 
+    794    022E                           
+    795    022E                            
+    796    022E                           
+    797    022E                           COPY_GROW: 
+    798    022E                           
+    799    022E     E5 4C                         MOV     A, 4CH 
+    800    0230                           
+    801    0230     B4 00 02                      CJNE    A, #0, COPY_GROW_DO 
+    802    0233                           
+    803    0233     80 58                         SJMP    SET_NEW_HEAD 
+    804    0235                           
+    805    0235                            
+    806    0235                           
+    807    0235                           COPY_GROW_DO: 
+    808    0235                           
+    809    0235     E5 4C                         MOV     A, 4CH 
+    810    0237                           
+    811    0237     14                            DEC     A 
+    812    0238                           
+    813    0238     24 50                         ADD     A, #50H 
+    814    023A                           
+    815    023A     F8                            MOV     R0, A 
+    816    023B                           
+    817    023B     E6                            MOV     A, @R0 
+    818    023C                           
+    819    023C     F5 4F                         MOV     4FH, A 
+    820    023E                           
+    821    023E                            
+    822    023E                           
+    823    023E     E5 4C                         MOV     A, 4CH 
+    824    0240                           
+    825    0240     24 50                         ADD     A, #50H 
+    826    0242                           
+    827    0242     F8                            MOV     R0, A 
+    828    0243                           
+    829    0243     E5 4F                         MOV     A, 4FH 
+    830    0245                           
+    831    0245     F6                            MOV     @R0, A 
+    832    0246                           
+    833    0246                            
+    834    0246                           
+    835    0246     E5 4C                         MOV     A, 4CH 
+    836    0248                           
+    837    0248     14                            DEC     A 
+    838    0249                           
+    839    0249     24 70                         ADD     A, #70H 
+    840    024B                           
+    841    024B     F8                            MOV     R0, A 
+    842    024C                           
+    843    024C     E6                            MOV     A, @R0 
+    844    024D                           
+    845    024D     F5 4F                         MOV     4FH, A 
+    846    024F                           
+    847    024F                            
+    848    024F                           
+    849    024F     E5 4C                         MOV     A, 4CH 
+    850    0251                           
+    851    0251     24 70                         ADD     A, #70H 
+    852    0253                           
+    853    0253     F8                            MOV     R0, A 
+    854    0254                           
+    855    0254     E5 4F                         MOV     A, 4FH 
+    856    0256                           
+    857    0256     F6                            MOV     @R0, A 
+    858    0257                           
+    859    0257                            
+    860    0257                           
+    861    0257     15 4C                         DEC     4CH 
+    862    0259                           
+    863    0259     80 D3                         SJMP    COPY_GROW 
+    864    025B                           
+    865    025B                            
+    866    025B                           
+    867    025B                           NO_FOOD: 
+    868    025B                           
+    869    025B     E5 42                         MOV     A, 42H 
+    870    025D                           
+    871    025D     14                            DEC     A 
+    872    025E                           
+    873    025E     F5 4C                         MOV     4CH, A 
+    874    0260                           
+    875    0260                            
+    876    0260                           
+    877    0260                           COPY_NORMAL: 
+    878    0260                           
+    879    0260     E5 4C                         MOV     A, 4CH 
+    880    0262                           
+    881    0262     B4 00 02                      CJNE    A, #0, COPY_NORMAL_DO 
+    882    0265                           
+    883    0265     80 26                         SJMP    SET_NEW_HEAD 
+    884    0267                           
+    885    0267                            
+    886    0267                           
+    887    0267                           COPY_NORMAL_DO: 
+    888    0267                           
+    889    0267     E5 4C                         MOV     A, 4CH 
+    890    0269                           
+    891    0269     14                            DEC     A 
+    892    026A                           
+    893    026A     24 50                         ADD     A, #50H 
+    894    026C                           
+    895    026C     F8                            MOV     R0, A 
+    896    026D                           
+    897    026D     E6                            MOV     A, @R0 
+    898    026E                           
+    899    026E     F5 4F                         MOV     4FH, A 
+    900    0270                           
+    901    0270                            
+    902    0270                           
+    903    0270     E5 4C                         MOV     A, 4CH 
+    904    0272                           
+    905    0272     24 50                         ADD     A, #50H 
+    906    0274                           
+    907    0274     F8                            MOV     R0, A 
+    908    0275                           
+    909    0275     E5 4F                         MOV     A, 4FH 
+    910    0277                           
+    911    0277     F6                            MOV     @R0, A 
+    912    0278                           
+    913    0278                            
+    914    0278                           
+    915    0278     E5 4C                         MOV     A, 4CH 
+    916    027A                           
+    917    027A     14                            DEC     A 
+    918    027B                           
+    919    027B     24 70                         ADD     A, #70H 
+    920    027D                           
+    921    027D     F8                            MOV     R0, A 
+    922    027E                           
+    923    027E     E6                            MOV     A, @R0 
+    924    027F                           
+    925    027F     F5 4F                         MOV     4FH, A 
+    926    0281                           
+    927    0281                            
+    928    0281                           
+    929    0281     E5 4C                         MOV     A, 4CH 
+    930    0283                           
+    931    0283     24 70                         ADD     A, #70H 
+    932    0285                           
+    933    0285     F8                            MOV     R0, A 
+    934    0286                           
+    935    0286     E5 4F                         MOV     A, 4FH 
+    936    0288                           
+    937    0288     F6                            MOV     @R0, A 
+    938    0289                           
+    939    0289                            
+    940    0289                           
+    941    0289     15 4C                         DEC     4CH 
+    942    028B                           
+    943    028B     80 D3                         SJMP    COPY_NORMAL 
+    944    028D                           
+    945    028D                            
+    946    028D                           
+    947    028D                           SET_NEW_HEAD: 
+    948    028D                           
+    949    028D     E5 4D                         MOV     A, 4DH 
+    950    028F                           
+    951    028F     F5 50                         MOV     50H, A 
+    952    0291                           
+    953    0291                            
+    954    0291                           
+    955    0291     E5 4E                         MOV     A, 4EH 
+    956    0293                           
+    957    0293     F5 70                         MOV     70H, A 
+    958    0295                           
+    959    0295                            
+    960    0295                           
+    961    0295     E5 4D                         MOV     A, 4DH 
+    962    0297                           
+    963    0297     B5 40 07                      CJNE    A, 40H, MOVE_END 
+    964    029A                           
+    965    029A     E5 4E                         MOV     A, 4EH 
+    966    029C                           
+    967    029C     B5 41 02                      CJNE    A, 41H, MOVE_END 
+    968    029F                           
+    969    029F     51 A2                         ACALL   NEW_FOOD 
+    970    02A1                           
+    971    02A1                            
+    972    02A1                           
+    973    02A1                           MOVE_END: 
+    974    02A1                           
+    975    02A1     22                            RET 
+    976    02A2                           
+    977    02A2                            
+    978    02A2                           
+    979    02A2                           NEW_FOOD: 
+    980    02A2                           
+    981    02A2                           NEW_FOOD_TRY: 
+    982    02A2                           
+    983    02A2     E5 8C                         MOV     A, TH0 
+    984    02A4                           
+    985    02A4     25 8A                         ADD     A, TL0 
+    986    02A6                           
+    987    02A6     54 07                         ANL     A, #07H 
+    988    02A8                           
+    989    02A8     F5 40                         MOV     40H, A 
+    990    02AA                           
+    991    02AA                            
+    992    02AA                           
+    993    02AA     E5 8C                         MOV     A, TH0 
+    994    02AC                           
+    995    02AC     25 8A                         ADD     A, TL0 
+    996    02AE                           
+    997    02AE     03                            RR      A 
+    998    02AF                           
+    999    02AF     03                            RR      A 
+   1000    02B0                           
+   1001    02B0     03                            RR      A 
+   1002    02B1                           
+   1003    02B1     54 07                         ANL     A, #07H 
+   1004    02B3                           
+   1005    02B3     F5 41                         MOV     41H, A 
+   1006    02B5                           
+   1007    02B5                            
+   1008    02B5                           
+   1009    02B5     75 4C 00                      MOV     4CH, #0 
+   1010    02B8                           
+   1011    02B8                            
+   1012    02B8                           
+   1013    02B8                           CHK_FOOD_SNAKE: 
+   1014    02B8                           
+   1015    02B8     E5 4C                         MOV     A, 4CH 
+   1016    02BA                           
+   1017    02BA     B5 42 02                      CJNE    A, 42H, CHK_FOOD_SNAKE_DO 
+   1018    02BD                           
+   1019    02BD     80 20                         SJMP    CHK_FOOD_BLOCKS 
+   1020    02BF                           
+   1021    02BF                            
+   1022    02BF                           
+   1023    02BF                           CHK_FOOD_SNAKE_DO: 
+   1024    02BF                           
+   1025    02BF     E5 4C                         MOV     A, 4CH 
+   1026    02C1                           
+   1027    02C1     24 50                         ADD     A, #50H 
+   1028    02C3                           
+   1029    02C3     F8                            MOV     R0, A 
+   1030    02C4                           
+   1031    02C4     E6                            MOV     A, @R0 
+   1032    02C5                           
+   1033    02C5     F5 4F                         MOV     4FH, A 
+   1034    02C7                           
+   1035    02C7                            
+   1036    02C7                           
+   1037    02C7     E5 40                         MOV     A, 40H 
+   1038    02C9                           
+   1039    02C9     B5 4F 0F                      CJNE    A, 4FH, CHK_FOOD_SNAKE_NEXT 
+   1040    02CC                           
+   1041    02CC                            
+   1042    02CC                           
+   1043    02CC     E5 4C                         MOV     A, 4CH 
+   1044    02CE                           
+   1045    02CE     24 70                         ADD     A, #70H 
+   1046    02D0                           
+   1047    02D0     F8                            MOV     R0, A 
+   1048    02D1                           
+   1049    02D1     E6                            MOV     A, @R0 
+   1050    02D2                           
+   1051    02D2     F5 4F                         MOV     4FH, A 
+   1052    02D4                           
+   1053    02D4                            
+   1054    02D4                           
+   1055    02D4     E5 41                         MOV     A, 41H 
+   1056    02D6                           
+   1057    02D6     B5 4F 02                      CJNE    A, 4FH, CHK_FOOD_SNAKE_NEXT 
+   1058    02D9                           
+   1059    02D9                            
+   1060    02D9                           
+   1061    02D9     80 C7                         SJMP    NEW_FOOD_TRY 
+   1062    02DB                           
+   1063    02DB                            
+   1064    02DB                           
+   1065    02DB                           CHK_FOOD_SNAKE_NEXT: 
+   1066    02DB                           
+   1067    02DB     05 4C                         INC     4CH 
+   1068    02DD                           
+   1069    02DD     80 D9                         SJMP    CHK_FOOD_SNAKE 
+   1070    02DF                           
+   1071    02DF                            
+   1072    02DF                           
+   1073    02DF                           CHK_FOOD_BLOCKS: 
+   1074    02DF                           
+   1075    02DF     90 03 17                      MOV     DPTR, #BLOCK_DATA 
+   1076    02E2                           
+   1077    02E2     75 4C 00                      MOV     4CH, #0 
+   1078    02E5                           
+   1079    02E5                            
+   1080    02E5                           
+   1081    02E5                           CHK_FOOD_BLOCK_LOOP: 
+   1082    02E5                           
+   1083    02E5     E5 4C                         MOV     A, 4CH 
+   1084    02E7                           
+   1085    02E7     B4 03 01                      CJNE    A, #3, CHK_FOOD_BLOCK_DO 
+   1086    02EA                           
+   1087    02EA     22                            RET 
+   1088    02EB                           
+   1089    02EB                            
+   1090    02EB                           
+   1091    02EB                           CHK_FOOD_BLOCK_DO: 
+   1092    02EB                           
+   1093    02EB     E5 4C                         MOV     A, 4CH 
+   1094    02ED                           
+   1095    02ED     93                            MOVC    A, @A+DPTR 
+   1096    02EE                           
+   1097    02EE     F5 4F                         MOV     4FH, A 
+   1098    02F0                           
+   1099    02F0                            
+   1100    02F0                           
+   1101    02F0     E5 40                         MOV     A, 40H 
+   1102    02F2                           
+   1103    02F2     B5 4F 0E                      CJNE    A, 4FH, CHK_FOOD_BLOCK_NEXT 
+   1104    02F5                           
+   1105    02F5                            
+   1106    02F5                           
+   1107    02F5     E5 4C                         MOV     A, 4CH 
+   1108    02F7                           
+   1109    02F7     24 03                         ADD     A, #3 
+   1110    02F9                           
+   1111    02F9     93                            MOVC    A, @A+DPTR 
+   1112    02FA                           
+   1113    02FA     F5 4F                         MOV     4FH, A 
+   1114    02FC                           
+   1115    02FC                            
+   1116    02FC                           
+   1117    02FC     E5 41                         MOV     A, 41H 
+   1118    02FE                           
+   1119    02FE     B5 4F 02                      CJNE    A, 4FH, CHK_FOOD_BLOCK_NEXT 
+   1120    0301                           
+   1121    0301                            
+   1122    0301                           
+   1123    0301     80 9F                         SJMP    NEW_FOOD_TRY 
+   1124    0303                           
+   1125    0303                            
+   1126    0303                           
+   1127    0303                           CHK_FOOD_BLOCK_NEXT: 
+   1128    0303                           
+   1129    0303     05 4C                         INC     4CH 
+   1130    0305                           
+   1131    0305     80 DE                         SJMP    CHK_FOOD_BLOCK_LOOP 
+   1132    0307                           
+   1133    0307                            
+   1134    0307                           
+   1135    0307                           DELAY_5MS: 
+   1136    0307                           
+   1137    0307     7B 32                         MOV     R3, #50 
+   1138    0309                           
+   1139    0309     7C 64                 D5_1:   MOV     R4, #100 
+   1140    030B                           
+   1141    030B     DC FE                 D5_2:   DJNZ    R4, D5_2 
+   1142    030D                           
+   1143    030D     DB FA                         DJNZ    R3, D5_1 
+   1144    030F                           
+   1145    030F     22                            RET 
+   1146    0310                           
+   1147    0310                            
+   1148    0310                           
+   1149    0310                           DELAY_LONG: 
+   1150    0310                           
+   1151    0310     7A 3C                         MOV     R2, #60 
+   1152    0312                           
+   1153    0312     71 07                 DL:     ACALL   DELAY_5MS 
+   1154    0314                           
+   1155    0314     DA FC                         DJNZ    R2, DL 
+   1156    0316                           
+   1157    0316     22                            RET 
+   1158    0317                           
+   1159    0317                            
+   1160    0317                           
+   1161    0317                           BLOCK_DATA: 
+   1162    0317                           
+   1163    0317     02 05 06                      DB      2, 5, 6 
+   1164    031A                           
+   1165    031A     02 04 06                      DB      2, 4, 6 
+   1166    031D                           
+   1167    031D                            
+   1168    031D                           
+   1169    031D                                   END 
