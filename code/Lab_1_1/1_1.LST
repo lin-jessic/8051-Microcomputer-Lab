@@ -1,0 +1,33 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000                           
+      3    0000     75 30 05                      MOV 30H,#05H
+      4    0003     78 20                         MOV R0,#20H
+      5    0005     79 28                         MOV R1,#28H
+      6    0007     7A 08                         MOV R2,#08H
+      7    0009     74 01                         MOV A,#01H
+      8    000B                           
+      9    000B     F6                    I0:     MOV @R0,A
+     10    000C     F7                            MOV @R1,A
+     11    000D     08                            INC R0
+     12    000E     09                            INC R1
+     13    000F     DA FA                         DJNZ R2,I0
+     14    0011                           
+     15    0011     78 20                         MOV R0,#20H
+     16    0013     79 28                         MOV R1,#28H
+     17    0015     AA 30                         MOV R2,30H
+     18    0017     7B 00                         MOV R3,#00H
+     19    0019                           
+     20    0019     E6                    L0:     MOV A,@R0
+     21    001A     87 F0                         MOV B,@R1
+     22    001C     A4                            MUL AB
+     23    001D     2B                            ADD A,R3
+     24    001E     FB                            MOV R3,A
+     25    001F     08                            INC R0
+     26    0020     09                            INC R1
+     27    0021     DA F6                         DJNZ R2,L0
+     28    0023                           
+     29    0023     80 FE                 WAIT:   SJMP WAIT
+     30    0025                           
+     31    0025                                   END

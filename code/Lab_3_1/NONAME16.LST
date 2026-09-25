@@ -1,0 +1,91 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000     02 00 30                      LJMP MAIN
+      3    0003                           
+      4    000B                                   ORG 000BH
+      5    000B     02 00 5B                      LJMP TIMER0_ISR
+      6    000E                           
+      7    0030                                   ORG 0030H
+      8    0030                           
+      9    0030     75 81 60              MAIN:   MOV SP,#60H
+     10    0033     75 80 FE                      MOV P0,#0FEH
+     11    0036     C2 00                         CLR 20H.0
+     12    0038                           
+     13    0038     75 89 01                      MOV TMOD,#01H
+     14    003B     75 8C DC                      MOV TH0,#0DCH
+     15    003E     75 8A 00                      MOV TL0,#00H
+     16    0041     D2 A9                         SETB ET0
+     17    0043     D2 AF                         SETB EA
+     18    0045     D2 8C                         SETB TR0
+     19    0047     75 30 28                      MOV 30H,#40
+     20    004A                           
+     21    004A                           MAIN_LOOP:
+     22    004A     20 90 FD                      JB P1.0,MAIN_LOOP
+     23    004D     11 93                         ACALL DELAY_20MS
+     24    004F     20 90 F8                      JB P1.0,MAIN_LOOP
+     25    0052     B2 00                         CPL 20H.0
+     26    0054                           
+     27    0054                           WAIT_RELEASE:
+     28    0054     30 90 FD                      JNB P1.0,WAIT_RELEASE
+     29    0057     11 93                         ACALL DELAY_20MS
+     30    0059     80 EF                         SJMP MAIN_LOOP
+     31    005B                           
+     32    005B                           TIMER0_ISR:
+     33    005B     C0 E0                         PUSH ACC
+     34    005D     C0 D0                         PUSH PSW
+     35    005F                           
+     36    005F     75 8C DC                      MOV TH0,#0DCH
+     37    0062     75 8A 00                      MOV TL0,#00H
+     38    0065                           
+     39    0065     D5 30 0C                      DJNZ 30H,TIMER0_EXIT
+     40    0068     75 30 28                      MOV 30H,#40
+     41    006B                           
+     42    006B     20 00 04                      JB 20H.0,ISR_LEFT_SHIFT
+     43    006E     11 79                         ACALL SHIFT_RIGHT
+     44    0070     80 02                         SJMP TIMER0_EXIT
+     45    0072                           
+     46    0072                           ISR_LEFT_SHIFT:
+     47    0072     11 86                         ACALL SHIFT_LEFT
+     48    0074                           
+     49    0074                           TIMER0_EXIT:
+     50    0074     D0 D0                         POP PSW
+     51    0076     D0 E0                         POP ACC
+     52    0078     32                            RETI
+     53    0079                           
+     54    0079                           SHIFT_RIGHT:
+     55    0079     E5 80                         MOV A,P0
+     56    007B     20 E7 04                      JB ACC.7,SR_WRAP
+     57    007E     23                            RL A
+     58    007F     F5 80                         MOV P0,A
+     59    0081     22                            RET
+     60    0082                           
+     61    0082                           SR_WRAP:
+     62    0082     75 80 FE                      MOV P0,#0FEH
+     63    0085     22                            RET
+     64    0086                           
+     65    0086                           SHIFT_LEFT:
+     66    0086     E5 80                         MOV A,P0
+     67    0088     20 E0 04                      JB ACC.0,SL_WRAP
+     68    008B     03                            RR A
+     69    008C     F5 80                         MOV P0,A
+     70    008E     22                            RET
+     71    008F                           
+     72    008F                           SL_WRAP:
+     73    008F     75 80 7F                      MOV P0,#7FH
+     74    0092     22                            RET
+     75    0093                           
+     76    0093                           DELAY_20MS:
+     77    0093     C0 00                         PUSH 00H
+     78    0095     C0 01                         PUSH 01H
+     79    0097     78 64                         MOV R0,#100
+     80    0099                           
+     81    0099     79 C8                 D20_L1: MOV R1,#200
+     82    009B                           
+     83    009B     D9 FE                 D20_L2: DJNZ R1,D20_L2
+     84    009D     D8 FA                         DJNZ R0,D20_L1
+     85    009F     D0 01                         POP 01H
+     86    00A1     D0 00                         POP 00H
+     87    00A3     22                            RET
+     88    00A4                           
+     89    00A4                                   END

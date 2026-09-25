@@ -1,0 +1,42 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000     02 00 0E                      LJMP START
+      3    0003                           
+      4    000B                                   ORG 000BH
+      5    000B     02 00 2B                      LJMP Timer0_ISR
+      6    000E                           
+      7    000E                           CNT4    EQU 30H
+      8    000E                           PATTERN EQU 31H
+      9    000E                           
+     10    000E     75 31 FE              START:  MOV PATTERN,#0FEH
+     11    0011     75 80 FF                      MOV P0,#0FFH
+     12    0014     11 1B                         ACALL Timer_Config
+     13    0016     75 30 04                      MOV CNT4,#4
+     14    0019                           
+     15    0019                           MAIN_LOOP:
+     16    0019     80 FE                         SJMP MAIN_LOOP
+     17    001B                           
+     18    001B                           Timer_Config:
+     19    001B     75 89 01                      MOV TMOD,#01H
+     20    001E     75 8C B2                      MOV TH0,#0B2H
+     21    0021     75 8A 00                      MOV TL0,#00H
+     22    0024     75 A8 82                      MOV IE,#82H
+     23    0027     75 88 10                      MOV TCON,#10H
+     24    002A     22                            RET
+     25    002B                           
+     26    002B                           Timer0_ISR:
+     27    002B     D5 30 0A                      DJNZ CNT4,reset_timer
+     28    002E     75 30 04                      MOV CNT4,#4
+     29    0031                           
+     30    0031     E5 31                         MOV A,PATTERN
+     31    0033     23                            RL A
+     32    0034     F5 31                         MOV PATTERN,A
+     33    0036     F5 80                         MOV P0,A
+     34    0038                           
+     35    0038                           reset_timer:
+     36    0038     75 8A 00                      MOV TL0,#00H
+     37    003B     75 8C B2                      MOV TH0,#0B2H
+     38    003E     32                            RETI
+     39    003F                           
+     40    003F                                   END

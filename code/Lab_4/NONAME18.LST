@@ -1,0 +1,95 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000     02 00 30                      LJMP START
+      3    0003                           
+      4    000B                                   ORG 000BH
+      5    000B     02 00 61                      LJMP Timer0_ISR
+      6    000E                           
+      7    000E                           TH0_INIT    EQU 0DCH
+      8    000E                           TL0_INIT    EQU 00H
+      9    000E                           CNT_TARGET  EQU 28H
+     10    000E                           CNT         EQU 30H
+     11    000E                           WALK        EQU 31H
+     12    000E                           DIR_FLAG    EQU 20H.0
+     13    000E                           
+     14    0030                                   ORG 0030H
+     15    0030                           
+     16    0030     75 81 60              START:  MOV SP,#60H
+     17    0033     75 31 01                      MOV WALK,#01H
+     18    0036     75 80 FE                      MOV P0,#0FEH
+     19    0039     C2 00                         CLR DIR_FLAG
+     20    003B     11 51                         ACALL Timer_Config
+     21    003D     75 30 28                      MOV CNT,#CNT_TARGET
+     22    0040                           
+     23    0040                           MAIN_LOOP:
+     24    0040     20 90 FD                      JB P1.0,MAIN_LOOP
+     25    0043     11 93                         ACALL DELAY_20MS
+     26    0045     20 90 F8                      JB P1.0,MAIN_LOOP
+     27    0048     B2 00                         CPL DIR_FLAG
+     28    004A                           
+     29    004A                           WAIT_RELEASE:
+     30    004A     30 90 FD                      JNB P1.0,WAIT_RELEASE
+     31    004D     11 93                         ACALL DELAY_20MS
+     32    004F     80 EF                         SJMP MAIN_LOOP
+     33    0051                           
+     34    0051                           Timer_Config:
+     35    0051     75 89 01                      MOV TMOD,#01H
+     36    0054     75 88 10                      MOV TCON,#10H
+     37    0057     75 A8 82                      MOV IE,#82H
+     38    005A     75 8C DC                      MOV TH0,#TH0_INIT
+     39    005D     75 8A 00                      MOV TL0,#TL0_INIT
+     40    0060     22                            RET
+     41    0061                           
+     42    0061                           Timer0_ISR:
+     43    0061     C0 E0                         PUSH ACC
+     44    0063     C0 D0                         PUSH PSW
+     45    0065     75 8C DC                      MOV TH0,#TH0_INIT
+     46    0068     75 8A 00                      MOV TL0,#TL0_INIT
+     47    006B     D5 30 20                      DJNZ CNT,ISR_Exit
+     48    006E     75 30 28                      MOV CNT,#CNT_TARGET
+     49    0071                           
+     50    0071     20 00 0E                      JB DIR_FLAG,ISR_LEFT
+     51    0074                           
+     52    0074                           ISR_RIGHT:
+     53    0074     E5 31                         MOV A,WALK
+     54    0076     23                            RL A
+     55    0077     70 02                         JNZ NoWrap_R
+     56    0079     74 01                         MOV A,#01H
+     57    007B                           
+     58    007B                           NoWrap_R:
+     59    007B     F5 31                         MOV WALK,A
+     60    007D     F4                            CPL A
+     61    007E     F5 80                         MOV P0,A
+     62    0080     80 0C                         SJMP ISR_Exit
+     63    0082                           
+     64    0082                           ISR_LEFT:
+     65    0082     E5 31                         MOV A,WALK
+     66    0084     03                            RR A
+     67    0085     70 02                         JNZ NoWrap_L
+     68    0087     74 80                         MOV A,#80H
+     69    0089                           
+     70    0089                           NoWrap_L:
+     71    0089     F5 31                         MOV WALK,A
+     72    008B     F4                            CPL A
+     73    008C     F5 80                         MOV P0,A
+     74    008E                           
+     75    008E                           ISR_Exit:
+     76    008E     D0 D0                         POP PSW
+     77    0090     D0 E0                         POP ACC
+     78    0092     32                            RETI
+     79    0093                           
+     80    0093                           DELAY_20MS:
+     81    0093     C0 00                         PUSH 00H
+     82    0095     C0 01                         PUSH 01H
+     83    0097     78 64                         MOV R0,#100
+     84    0099                           
+     85    0099     79 C8                 D20_L1: MOV R1,#200
+     86    009B                           
+     87    009B     D9 FE                 D20_L2: DJNZ R1,D20_L2
+     88    009D     D8 FA                         DJNZ R0,D20_L1
+     89    009F     D0 01                         POP 01H
+     90    00A1     D0 00                         POP 00H
+     91    00A3     22                            RET
+     92    00A4                           
+     93    00A4                                   END

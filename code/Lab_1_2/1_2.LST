@@ -1,0 +1,78 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000                           
+      3    0000     78 20                 START:  MOV R0,#20H
+      4    0002     79 28                         MOV R1,#28H
+      5    0004     7A 08                         MOV R2,#08H
+      6    0006     74 20                         MOV A,#20H
+      7    0008                           
+      8    0008     F6                    I0:     MOV @R0,A
+      9    0009     F7                            MOV @R1,A
+     10    000A     08                            INC R0
+     11    000B     09                            INC R1
+     12    000C     DA FA                         DJNZ R2,I0
+     13    000E                           
+     14    000E     75 80 FF                      MOV P0,#0FFH
+     15    0011     7B 00                         MOV R3,#00H
+     16    0013     7C 00                         MOV R4,#00H
+     17    0015                           
+     18    0015     78 20                         MOV R0,#20H
+     19    0017     79 28                         MOV R1,#28H
+     20    0019     7A 08                         MOV R2,#08H
+     21    001B                           
+     22    001B     E6                    L0:     MOV A,@R0
+     23    001C     87 F0                         MOV B,@R1
+     24    001E     A4                            MUL AB
+     25    001F     FF                            MOV R7,A
+     26    0020                           
+     27    0020     E5 F0                         MOV A,B
+     28    0022     60 01                         JZ NOOV
+     29    0024     0C                            INC R4
+     30    0025                           
+     31    0025     EB                    NOOV:   MOV A,R3
+     32    0026     2F                            ADD A,R7
+     33    0027     FB                            MOV R3,A
+     34    0028     08                            INC R0
+     35    0029     09                            INC R1
+     36    002A     DA EF                         DJNZ R2,L0
+     37    002C                           
+     38    002C     EC                            MOV A,R4
+     39    002D     60 3D                         JZ NOLED
+     40    002F                           
+     41    002F     B4 01 05                      CJNE A,#01H,CHK2
+     42    0032     75 90 FE                      MOV P1,#0FEH
+     43    0035     80 38                         SJMP STAY
+     44    0037                           
+     45    0037     B4 02 05              CHK2:   CJNE A,#02H,CHK3
+     46    003A     75 90 FC                      MOV P1,#0FCH
+     47    003D     80 30                         SJMP STAY
+     48    003F                           
+     49    003F     B4 03 05              CHK3:   CJNE A,#03H,CHK4
+     50    0042     75 90 F8                      MOV P1,#0F8H
+     51    0045     80 28                         SJMP STAY
+     52    0047                           
+     53    0047     B4 04 05              CHK4:   CJNE A,#04H,CHK5
+     54    004A     75 80 F0                      MOV P0,#0F0H
+     55    004D     80 20                         SJMP STAY
+     56    004F                           
+     57    004F     B4 05 05              CHK5:   CJNE A,#05H,CHK6
+     58    0052     75 80 E0                      MOV P0,#0E0H
+     59    0055     80 18                         SJMP STAY
+     60    0057                           
+     61    0057     B4 06 05              CHK6:   CJNE A,#06H,CHK7
+     62    005A     75 80 C0                      MOV P0,#0C0H
+     63    005D     80 10                         SJMP STAY
+     64    005F                           
+     65    005F     B4 07 05              CHK7:   CJNE A,#07H,CHK8
+     66    0062     75 80 80                      MOV P0,#80H
+     67    0065     80 08                         SJMP STAY
+     68    0067                           
+     69    0067     75 80 00              CHK8:   MOV P0,#00H
+     70    006A     80 03                         SJMP STAY
+     71    006C                           
+     72    006C     75 80 FF              NOLED:  MOV P0,#0FFH
+     73    006F                           
+     74    006F     80 FE                 STAY:   SJMP STAY
+     75    0071                           
+     76    0071                                   END

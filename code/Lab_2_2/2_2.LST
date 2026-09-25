@@ -1,0 +1,43 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000                           
+      3    0000     75 80 FF              MAIN:   MOV P0,#0FFH
+      4    0003     75 D0 00                      MOV PSW,#00H
+      5    0006                           
+      6    0006                           WAIT_KEY:
+      7    0006     E5 90                         MOV A,P1
+      8    0008     60 FC                         JZ WAIT_KEY
+      9    000A                           
+     10    000A                           RIGHT_RIDER:
+     11    000A     74 F8                         MOV A,#11111000B
+     12    000C     7C 05                         MOV R4,#5
+     13    000E                           
+     14    000E                           SCAN_RIGHT:
+     15    000E     F5 80                         MOV P0,A
+     16    0010     12 00 22                      LCALL DELAY_100MS
+     17    0013     03                            RR A
+     18    0014     DC F8                         DJNZ R4,SCAN_RIGHT
+     19    0016                           
+     20    0016     7C 05                         MOV R4,#5
+     21    0018                           
+     22    0018                           SCAN_LEFT:
+     23    0018     F5 80                         MOV P0,A
+     24    001A     12 00 22                      LCALL DELAY_100MS
+     25    001D     23                            RL A
+     26    001E     DC F8                         DJNZ R4,SCAN_LEFT
+     27    0020     80 E8                         SJMP RIGHT_RIDER
+     28    0022                           
+     29    0022                           DELAY_100MS:
+     30    0022     78 01                         MOV R0,#1
+     31    0024                           
+     32    0024     79 28                 D1:     MOV R1,#40
+     33    0026                           
+     34    0026     7A 3F                 D2:     MOV R2,#63
+     35    0028                           
+     36    0028     DA FE                 D3:     DJNZ R2,D3
+     37    002A     D9 FA                         DJNZ R1,D2
+     38    002C     D8 F6                         DJNZ R0,D1
+     39    002E     22                            RET
+     40    002F                           
+     41    002F                                   END

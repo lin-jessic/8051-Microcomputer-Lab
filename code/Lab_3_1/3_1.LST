@@ -1,0 +1,49 @@
+Intel-8051 Macro Assembler - Version 1.00
+
+      1    0000                                   ORG 0000H
+      2    0000     02 00 0E                      LJMP START
+      3    0003                           
+      4    000B                                   ORG 000BH
+      5    000B     02 00 2B                      LJMP Timer0_ISR
+      6    000E                           
+      7    000E                           TH0_INIT    EQU 4CH
+      8    000E                           TL0_INIT    EQU 1DH
+      9    000E                           CNT_TARGET  EQU 28
+     10    000E                           
+     11    000E                           CNT         EQU 30H
+     12    000E                           WALK        EQU 31H
+     13    000E                           
+     14    000E     75 31 01              START:  MOV WALK,#01H
+     15    0011     75 80 FF                      MOV P0,#0FFH
+     16    0014     11 1B                         ACALL Timer_Config
+     17    0016     75 30 1C                      MOV CNT,#CNT_TARGET
+     18    0019                           
+     19    0019                           MAIN_LOOP:
+     20    0019     80 FE                         SJMP MAIN_LOOP
+     21    001B                           
+     22    001B                           Timer_Config:
+     23    001B     75 89 01                      MOV TMOD,#01H
+     24    001E     75 8C 4C                      MOV TH0,#TH0_INIT
+     25    0021     75 8A 1D                      MOV TL0,#TL0_INIT
+     26    0024     75 A8 82                      MOV IE,#82H
+     27    0027     75 88 10                      MOV TCON,#10H
+     28    002A     22                            RET
+     29    002B                           
+     30    002B                           Timer0_ISR:
+     31    002B     75 8C 4C                      MOV TH0,#TH0_INIT
+     32    002E     75 8A 1D                      MOV TL0,#TL0_INIT
+     33    0031     D5 30 0F                      DJNZ CNT,ISR_Exit
+     34    0034     75 30 1C                      MOV CNT,#CNT_TARGET
+     35    0037     E5 31                         MOV A,WALK
+     36    0039     23                            RL A
+     37    003A     70 02                         JNZ NoWrap
+     38    003C     74 01                         MOV A,#01H
+     39    003E                           
+     40    003E     F5 31                 NoWrap: MOV WALK,A
+     41    0040     F4                            CPL A
+     42    0041     F5 80                         MOV P0,A
+     43    0043                           
+     44    0043                           ISR_Exit:
+     45    0043     32                            RETI
+     46    0044                           
+     47    0044                                   END
